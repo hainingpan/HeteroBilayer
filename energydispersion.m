@@ -1,33 +1,34 @@
 %% +K
 %  params_pK=mainTMD('valley',1,'vz_t',0);
-% params_pK=mainTMD('valley',1);
+ params_pK=mainTMD('valley',1);
 
-% m=(params_pK.kb+params_pK.kt)/2;
-% kt_m_x=linspace(params_pK.kt(1),m(1),40);
-% kt_m_y=linspace(params_pK.kt(2),m(2),40);
-% m_kb_x=linspace(m(1),params_pK.kb(1),40);
-% m_kb_y=linspace(m(2),params_pK.kb(2),40);
-% kb_gamma_x=linspace(params_pK.kb(1),0,40);
-% kb_gamma_y=linspace(params_pK.kb(2),0,40);
-% 
-% 
-% kxlist=[kt_m_x,m_kb_x,kb_gamma_x];
-% kylist=[kt_m_y,m_kb_y,kb_gamma_y];
-% 
-% segment=sqrt(diff(kxlist).^2+diff(kylist).^2);
-% klist=[0,cumsum(segment)];
+m=(params_pK.kb+params_pK.kt)/2;
+kt_m_x=linspace(params_pK.kt(1),m(1),40);
+kt_m_y=linspace(params_pK.kt(2),m(2),40);
+m_kb_x=linspace(m(1),params_pK.kb(1),40);
+m_kb_y=linspace(m(2),params_pK.kb(2),40);
+kb_gamma_x=linspace(params_pK.kb(1),0,40);
+kb_gamma_y=linspace(params_pK.kb(2),0,40);
 
-% energylist=zeros(2*(2*params_pK.Nmax+1)^2,length(kxlist)); %initialize
-% for i=1:length(kxlist)
-%     energylist(:,i)=energyTMD(kxlist(i),kylist(i),params_pK);
-% end
+
+kxlist=[kt_m_x,m_kb_x,kb_gamma_x];
+kylist=[kt_m_y,m_kb_y,kb_gamma_y];
+
+segment=sqrt(diff(kxlist).^2+diff(kylist).^2);
+klist=[0,cumsum(segment)];
+
+energylist=zeros(2*(2*params_pK.Nmax+1)^2,length(kxlist)); %initialize
+for i=1:length(kxlist)
+    energylist(:,i)=energyTMD(kxlist(i),kylist(i),params_pK);
+end
 figure;
-% plot(klist,1000*energylist,'b')
-% hold on
+plot(klist,1000*energylist,'b')
+hold on
 
 %% -K
-params_mK=mainTMD('valley',-1,'vz_t',00);
-% params_mK=mainTMD('valley',-1);
+%  params_mK=mainTMD('valley',-1,'vz_t',-40);
+ params_mK=mainTMD('valley',-1);
+%   params_mK=mainTMD('valley',-1,'a_t',3.28e-10*5.076e6,'a_b',3.28e-10*5.076e6,'m_b',0.45,'m_t',0.45,'V_b',20,'V_t',20,'psi_b',-108,'psi_t',108,'w',20,'Vz_b',0,'Vz_t',0,'omega',1,'theta',3);
 
 m=(params_mK.kb+params_mK.kt)/2;
 kt_m_x=linspace(params_mK.kt(1),m(1),40);

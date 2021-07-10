@@ -8,10 +8,10 @@ function re=Deltal(h1,h2,l,parameters)
         V=parameters.V_t;
         psi=parameters.psi_t;
     end
-    re=V*((h1==0).*(h2==-1)*exp(1i*l*psi)+...    %G1
-        (h1==0).*(h2==1)*exp(-1i*l*psi)+...    %G4
-        (h1==-1).*(h2==0)*exp(1i*l*psi)+...  `   %G5
-        (h1==1).*(h2==0)*exp(-1i*l*psi)+...    %G2
-        (h1==1).*(h2==1)*exp(1i*l*psi)+...    %G3
-        (h1==-1).*(h2==-1)*exp(-1i*l*psi));       %G6
+    re=V*((h1==0).*(h2==-1)*exp(1i*psi)+...    %G1
+        (h1==0).*(h2==1)*exp(-1i*psi)+...    %G4
+        (h1==-1).*(h2==0)*exp(1i*psi)+...  `   %G5
+        (h1==1).*(h2==0)*exp(-1i*psi)+...    %G2
+        (h1==1).*(h2==1)*exp(1i*psi)+...    %G3
+        (h1==-1).*(h2==-1)*exp(-1i*psi));       %G6
     end

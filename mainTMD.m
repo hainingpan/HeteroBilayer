@@ -13,12 +13,13 @@ function parameters=mainTMD(varargin)
     addParameter(p,'Vz_b',0);
     addParameter(p,'Vz_t',-36.8);
     addParameter(p,'Nmax',5);
+    addParameter(p,'omega',exp(1i*2*pi/3));
     addParameter(p,'valley',-1);% -1: -K; +1; +k
     addParameter(p,'nu',[1,1]);%filling factor number(#1) per site(#2); no spin degeneracy considered
     addParameter(p,'hole',1); %1: hole-like energy band ; -1: particle-like energy band
     
     parse(p,varargin{:});
-    parameters=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole);
+    parameters=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole);
 
     delta=(parameters.a_b-parameters.a_t)/parameters.a_t;
     parameters.aM=parameters.a_b/sqrt(delta^2+parameters.theta^2);
@@ -32,10 +33,8 @@ function parameters=mainTMD(varargin)
     parameters.g6=[2*pi/parameters.aM,(2*pi)/(sqrt(3)*parameters.aM)];
     parameters.bM1=parameters.g5;
     parameters.bM2=parameters.g1;
-%     parameters.kb=-4*pi/(3*parameters.aM)*[-1/2,sqrt(3)/2];
-%     parameters.kt=-4*pi/(3*parameters.aM)*[1/2,sqrt(3)/2];
-    parameters.kb=4*pi/(3*parameters.aM)*[-1/2,sqrt(3)/2];
-    parameters.kt=4*pi/(3*parameters.aM)*[1/2,sqrt(3)/2];
+    parameters.kb=-4*pi/(3*parameters.aM)*[-1/2,sqrt(3)/2];
+    parameters.kt=-4*pi/(3*parameters.aM)*[1/2,sqrt(3)/2];
 
     Nrange=-parameters.Nmax:parameters.Nmax;
     [h1index,h2index]=meshgrid(Nrange,Nrange);

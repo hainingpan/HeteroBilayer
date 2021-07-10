@@ -1,4 +1,4 @@
-function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,tag]=berrycurvature(level,parameters)
+function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,parameters)
     n=10;
     bM1=parameters.bM1;
     bM2=parameters.bM2;
@@ -39,21 +39,17 @@ function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,tag]=berrycurvature(level,pa
         for yindex=1:Ny-1
             k=[kcxmap(xindex,yindex),kcymap(xindex,yindex)];
             shift=[0,0];
-            if (k(2)>=0) && (k(2)>=line(sqrt(3),k(1),kb))
+            if (k(2)>=0) && (k(2)>=line(sqrt(3),k(1),-kb))
                 shift=a1*2*n;
-                tag(xindex,yindex)=1;
             end
-            if (k(2)>=0) && (k(2)>=line(-sqrt(3),k(1),kt))
+            if (k(2)>=0) && (k(2)>=line(-sqrt(3),k(1),-kt))
                 shift=a2*2*n;
-                tag(xindex,yindex)=2;
             end
-            if (k(2)<=0) && (k(2)<=line(sqrt(3),k(1),-kb))
+            if (k(2)<=0) && (k(2)<=line(sqrt(3),k(1),kb))
                 shift=-a1*2*n;
-                tag(xindex,yindex)=3;
             end
-            if (k(2)<=0) && (k(2)<=line(-sqrt(3),k(1),-kt))
+            if (k(2)<=0) && (k(2)<=line(-sqrt(3),k(1),kt))
                 shift=-a2*2*n;
-                tag(xindex,yindex)=4;
             end   
             kcx2map(xindex,yindex)=k(1)+shift(1);
             kcy2map(xindex,yindex)=k(2)+shift(2);
@@ -64,5 +60,7 @@ function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,tag]=berrycurvature(level,pa
         .*dot(umap(1:end-1,2:end,:),umap(2:end,2:end,:),3)...
         .*dot(umap(2:end,2:end,:),umap(2:end,1:end-1,:),3)...
         .*dot(umap(2:end,1:end-1,:),umap(1:end-1,1:end-1,:),3))/omega;
+
+    chern=sum(bcmap(:))*omega/(2*pi);
         
     end
