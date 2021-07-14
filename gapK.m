@@ -31,6 +31,16 @@ parfor index=1:length(Eglist)
     gaplist(index)=min(enlist);
 end
 
+chern1list=Eglist*0;
+chern2list=Eglist*0;
+parfor index=1:length(Eglist)
+    Eg=Eglist(index);
+    params_mK=mainTMD('valley',-1,'vz_t',Eg);
+    [~,~,~,~,~,~,chern1]=berrycurvature(1,params_mK);
+    [~,~,~,~,~,~,chern2]=berrycurvature(2,params_mK);
+    chern1list(index)=chern1;
+    chern2list(index)=chern2;
+end
 
 
 

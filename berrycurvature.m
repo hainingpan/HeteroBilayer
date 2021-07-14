@@ -1,5 +1,5 @@
 function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,parameters)
-    n=10;
+    n=20;
     bM1=parameters.bM1;
     bM2=parameters.bM2;
     kt=parameters.kt;
@@ -13,13 +13,13 @@ function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,
     kymap=zeros(2*n+1,2*n+1);
     kcx2map=zeros(2*n,2*n); %after shifting to Hexagon
     kcy2map=zeros(2*n,2*n);  %after shifting to Hexagon
-    umap=zeros(2*n+1,2*n+1,2*(2*parameters.Nmax+1)^2);
+    umap=zeros(2*n+1,2*n+1,2*(length(parameters.h1index)));
     omega=abs(cross([a1,0],[a2,0]));
     omega=omega(3);
     
     Nx=length(xrange);
     Ny=length(yrange);
-    for xindex=1:Nx
+    parfor xindex=1:Nx
         kx=xrange(xindex);
         for yindex=1:Ny
             ky=yrange(yindex);
@@ -33,22 +33,21 @@ function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,
     
     kcxmap=(kxmap(1:end-1,1:end-1)+kxmap(1:end-1,2:end)+kxmap(2:end,1:end-1)+kxmap(2:end,2:end))/4;
     kcymap=(kymap(1:end-1,1:end-1)+kymap(1:end-1,2:end)+kymap(2:end,1:end-1)+kymap(2:end,2:end))/4;
-    tag=0*kcxmap;
     line=@(k,x,x0) k*(x-x0(1))+x0(2);
     for xindex=1:Nx-1
         for yindex=1:Ny-1
             k=[kcxmap(xindex,yindex),kcymap(xindex,yindex)];
             shift=[0,0];
-            if (k(2)>=0) && (k(2)>=line(sqrt(3),k(1),-kb))
+            if (k(2)>=0) && (k(2)>=line(sqrt(3),k(1),kb))
                 shift=a1*2*n;
             end
-            if (k(2)>=0) && (k(2)>=line(-sqrt(3),k(1),-kt))
+            if (k(2)>=0) && (k(2)>=line(-sqrt(3),k(1),kt))
                 shift=a2*2*n;
             end
-            if (k(2)<=0) && (k(2)<=line(sqrt(3),k(1),kb))
+            if (k(2)<=0) && (k(2)<=line(sqrt(3),k(1),-kb))
                 shift=-a1*2*n;
             end
-            if (k(2)<=0) && (k(2)<=line(-sqrt(3),k(1),kt))
+            if (k(2)<=0) && (k(2)<=line(-sqrt(3),k(1),-kt))
                 shift=-a2*2*n;
             end   
             kcx2map(xindex,yindex)=k(1)+shift(1);

@@ -1,30 +1,30 @@
-function [val,vec]=energyTMD(kx,ky,parameters)
+function [val,vec,H]=energyTMD(kx,ky,params)
 %energy at (kx,ky)
-if parameters.valley==-1
-    DeltaTmat=parameters.DeltaTmat;
-    DeltaTTmat=parameters.DeltaTTmat;
-    Deltabmat=parameters.Deltabmat;
-    Deltatmat=parameters.Deltatmat;
-    Vz_b=parameters.Vz_b;
-    Vz_t=parameters.Vz_t;
+if params.valley==1
+    DeltaTmat=params.DeltaTmat;
+    DeltaTTmat=params.DeltaTTmat;
+    Deltabmat=params.Deltabmat;
+    Deltatmat=params.Deltatmat;
+    Vz_b=params.Vz_b;
+    Vz_t=params.Vz_t;
 else
-    DeltaTmat=conj(parameters.DeltaTmat);
-    DeltaTTmat=conj(parameters.DeltaTTmat);
-    Deltabmat=conj(parameters.Deltabmat);
-    Deltatmat=conj(parameters.Deltatmat);
-    Vz_b=conj(parameters.Vz_b);
-    Vz_t=conj(parameters.Vz_t);
+    DeltaTmat=conj(params.DeltaTmat);
+    DeltaTTmat=conj(params.DeltaTTmat);
+    Deltabmat=conj(params.Deltabmat);
+    Deltatmat=conj(params.Deltatmat);
+    Vz_b=conj(params.Vz_b);
+    Vz_t=conj(params.Vz_t);
 end
-m_b=parameters.m_b;
-m_t=parameters.m_t;
-kb=parameters.kb;
-kt=parameters.kt;
-bM1=parameters.bM1;
-bM2=parameters.bM2;
-h1index=parameters.h1index;
-h2index=parameters.h2index;
-kblist=(-parameters.valley)*[kx,ky]-kb+h1index(:)*bM1+h2index(:)*bM2;
-ktlist=(-parameters.valley)*[kx,ky]-kt+h1index(:)*bM1+h2index(:)*bM2;
+m_b=params.m_b;
+m_t=params.m_t;
+kb=params.kb;
+kt=params.kt;
+bM1=params.bM1;
+bM2=params.bM2;
+h1index=params.h1index;
+h2index=params.h2index;
+kblist=(params.valley)*[kx,ky]-kb+h1index(:)*bM1+h2index(:)*bM2;
+ktlist=(params.valley)*[kx,ky]-kt+h1index(:)*bM1+h2index(:)*bM2;
 H11=-1/(2*m_b)*diag(dot(kblist,kblist,2))+Deltabmat+Vz_b*eye(length(Deltabmat));
 H22=-1/(2*m_t)*diag(dot(ktlist,ktlist,2))+Deltatmat+Vz_t*eye(length(Deltabmat));
 H12=DeltaTmat;
