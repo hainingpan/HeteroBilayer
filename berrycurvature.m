@@ -1,5 +1,5 @@
 function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,parameters)
-    n=20;
+    n=10;
     bM1=parameters.bM1;
     bM2=parameters.bM2;
     kt=parameters.kt;
@@ -19,18 +19,23 @@ function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,
     
     Nx=length(xrange);
     Ny=length(yrange);
-    parfor xindex=1:Nx
+    % Nx=parameters.n;
+    % Ny=parameters.n;
+    % counter=1;
+    for xindex=1:Nx
         kx=xrange(xindex);
         for yindex=1:Ny
             ky=yrange(yindex);
             k=kx*a1+ky*a2;
+            % k=parameters.k(counter,:);
+            % counter=counter+1;
             [~,vec]=energyTMD(k(1),k(2),parameters);
             umap(xindex,yindex,:)=vec(:,level);
             kxmap(xindex,yindex)=k(1);
             kymap(xindex,yindex)=k(2);
         end
     end
-    
+   
     kcxmap=(kxmap(1:end-1,1:end-1)+kxmap(1:end-1,2:end)+kxmap(2:end,1:end-1)+kxmap(2:end,2:end))/4;
     kcymap=(kymap(1:end-1,1:end-1)+kymap(1:end-1,2:end)+kymap(2:end,1:end-1)+kymap(2:end,2:end))/4;
     line=@(k,x,x0) k*(x-x0(1))+x0(2);

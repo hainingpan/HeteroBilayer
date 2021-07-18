@@ -1,10 +1,18 @@
-function ch=chern(wfall,parameters)
+function ch=chern(wfall,valley_index,parameters)
     n=sqrt(size(wfall,1));
     NL=size(wfall,2);
-    level=1:NL*parameters.nu(1)/(2*parameters.nu(2));
-    % level=1:2;
-    wfmap=reshape(wfall,[n,n,size(wfall,2),size(wfall,3)]); %Nkx,Nky,level index, wf component
-    umap=(wfmap(:,:,level,:));
+    % level=1:NL*parameters.nu(1)/(2*parameters.nu(2));
+    level=1:2;
+    valley_p=repmat(valley_index==1,[1,1,size(wfall,3)]);
+    valley_m=repmat(valley_index==-1,[1,1,size(wfall,3)]);
+    wfall_p=wfall(valley_p);
+    wfall_m=wfall(valley_m);
+    wfall_p=reshape(wfall_p,[n,n,NL/2,size(wfall,3)]);
+    wfall_m=reshape(wfall_m,[n,n,NL/2,size(wfall,3)]);
+    umap=cat(3,wfall_p(:,:,1,:),wfall_m(:,:,1,:));
+    % umap=reshape(wfall_2,[n,n,2,size(wfall,3)]); %Nkx,Nky,level index, wf component
+    % umap=(wfmap(:,:,level,:));
+    
     berrycur=zeros(n-1);
     for i=1:n
         for j=1:n

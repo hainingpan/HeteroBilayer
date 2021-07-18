@@ -2,11 +2,13 @@ figure;
 % +K
 w=1.3;
 %  params_pK=mainTMD('valley',1,'vz_t',0);
- params_pK=mainTMD('Nmax',3,'valley',1,'V_t',4.1,'psi_t',240,'V_b',4.1,'psi_b',-14,'vz_t',-0,'vz_b',0,'w',1.3,'nu',[2,1]);
+% params_pK=mainTMD('Nmax',2,'valley',1,'V_t',4.1,'psi_t',240,'V_b',4.1,'psi_b',-14,'vz_t',-30,'vz_b',0,'w',1.3);
+params_pK=mainTMD('Nmax',2,'d',5e-9*5.076e6,'valley',1,'V_t',4.1,'psi_t',240,'V_b',4.1,'psi_b',-14,'vz_t',-30,'vz_b',0,'w',1.3,'nu',[2,1],'n',21);
+
 % params_pK=mainTMD('valley',1,'w',0,'V_t',4.1,'psi_t',240);
 
 m=(params_pK.kb+params_pK.kt)/2;
-% gamma=-params_pK.kb0;
+% gamma=-params_pK.shift;
 gamma=[0,0];
 kt_m_x=linspace(params_pK.kt(1),m(1),40);
 kt_m_y=linspace(params_pK.kt(2),m(2),40);
@@ -31,7 +33,7 @@ hold on
 
 %% -K
 %  params_mK=mainTMD('valley',-1,'vz_t',-40);
- params_mK=mainTMD('Nmax',3,'valley',-1,'V_t',4.1,'psi_t',240,'V_b',4.1,'psi_b',-14,'vz_t',-0,'vz_b',0,'w',1.3,'nu',[2,1]);
+ params_mK=mainTMD('Nmax',2,'valley',-1,'V_t',4.1,'psi_t',240,'V_b',4.1,'psi_b',-14,'vz_t',-30,'vz_b',0,'w',1.3);
 %   params_mK=mainTMD('valley',-1,'a_t',3.28e-10*5.076e6,'a_b',3.28e-10*5.076e6,'m_b',0.45,'m_t',0.45,'V_b',20,'V_t',20,'psi_b',-108,'psi_t',108,'w',20,'Vz_b',0,'Vz_t',0,'omega',1,'theta',3);
 
 m=(params_mK.kb+params_mK.kt)/2;

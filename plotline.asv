@@ -1,0 +1,52 @@
+function gap=plotline(energyall,occ,valley_index,params)
+
+energyall_sort=sort(energyall(:));
+Nk=size(params.k,1);
+mu=energyall_sort(Nk*params.nu(1)/(params.nu(2)));
+
+gap=energyall_sort(Nk*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*params.nu(1)/(params.nu(2)));
+
+
+kt=params.bM1*1/3+params.bM2*2/3;
+kb=params.bM1*2/3+params.bM2*1/3;
+m=(kb+kt)/2;
+gamma=[0,0];
+kt_m_x=linspace(kt(1),m(1),40);
+kt_m_y=linspace(kt(2),m(2),40);
+m_kb_x=linspace(m(1),kb(1),40);
+m_kb_y=linspace(m(2),kb(2),40);
+kb_gamma_x=linspace(kb(1),gamma(1),40);
+kb_gamma_y=linspace(kb(2),gamma(2),40);
+kxlist=[kt_m_x(1:end-1),m_kb_x(1:end-1),kb_gamma_x];
+kylist=[kt_m_y(1:end-1),m_kb_y(1:end-1),kb_gamma_y];
+segment=sqrt(diff(kxlist).^2+diff(kylist).^2);
+klist=[0,cumsum(segment)];
+
+ figure;
+ title(sprintf('Gap: %e: (meV)',gap*1000));
+hold on;
+r=[1,0,0];
+b=[0,0,1];
+for i=1:10
+    en_q=griddata(params.k(:,1),params.k(:,2),1000*energyall(:,i),kxlist,kylist);
+    valley_q=griddata(params.k(:,1),params.k(:,2),valley_index(:,i),kxlist,kylist);
+    occ_q=5*griddata(params.k(:,1),params.k(:,2),occ(:,i),kxlist,kylist)+1;
+    occ_q_rgb=zeros(length(kxlist),3);
+    occ_q_rgb
+    scatter(klist,en_q,occ_q*10,valley_q,'filled');
+    % plot(klist,en_q,'b')
+end
+
+line(klist([1,118]),[1000*mu,1000*mu],'color','k','LineStyle','--');
+% disp(1000*mu)
+line(klist([40,40]),[-400,200],'color','k','LineStyle','--','HandleVisibility','off');
+line(klist([79,79]),[-400,200],'color','k','LineStyle','--','HandleVisibility','off');
+line(klist([118,118]),[-200,200],'color','k','LineStyle','--','HandleVisibility','off');
+
+
+xticks(klist([1,40,79,118]))
+xticklabels({'\kappa_t','m','\kappa_b','\gamma'});
+xlim([klist(1),klist(118)])
+ylim([1000*min(energyall(:,1)),1000*max(energyall(:,4))])
+
+drawnow;
