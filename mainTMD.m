@@ -162,7 +162,7 @@ function params=mainTMD(varargin)
     % end
     % params.Qindex=Qlist;
     % params.Q=cellfun(@(x) x(1)*params.bM1+x(2)*params.bM2,Qlist,'UniformOutput',0);
-
+    valley0=params.valley;
     if params.nu~=0
         [b_a_x,b_b_x]=meshgrid(params.b_index(:,1),params.b_index(:,1));
         [b_a_y,b_b_y]=meshgrid(params.b_index(:,2),params.b_index(:,2));
@@ -176,7 +176,7 @@ function params=mainTMD(varargin)
         params.Delta_TT_m=reshape(DeltaTT(b_a_x-b_b_x,b_a_y-b_b_y,params),size(params.b_index,1),size(params.b_index,1));
         params.Delta_b_m=reshape(Deltal(b_a_x-b_b_x,b_a_y-b_b_y,1,params),size(params.b_index,1),size(params.b_index,1));
         params.Delta_t_m=reshape(Deltal(b_a_x-b_b_x,b_a_y-b_b_y,-1,params),size(params.b_index,1),size(params.b_index,1));
-
+        params.valley=valley0;
 
         % For the detailed def, check oneNotes
         [q_a_x,q_b_x,q_g_x,q_d_x,b_a_x,b_b_x,b_g_x,b_d_x]=ndgrid(params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1));
