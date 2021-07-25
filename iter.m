@@ -1,7 +1,7 @@
 % params=mainTMD('Nmax',3,'d',100e-9*5.076e6,'a_t',3.42e-10*5.076e6,'a_b',3.575e-10*5.076e6,'V_t',20.1,'psi_t',240,'V_b',20.1,'psi_b',-14,'vz_t',-100,'vz_b',0,'w',0,'nu',[1,1],'n',15,'epsilon',20);
-params=mainTMD('Nmax',3,'V_t',16.1,'psi_t',240,'V_b',16.1,'psi_b',-14,'vz_t',-10,'vz_b',0,'w',8.3,'nu',[2,1],'n',15,'epsilon',20);
+params=mainTMD('Nmax',3,'a_t',3.34e-10*5.076e6,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',-4,'vz_b',0,'w',20,'nu',[2,1],'n',15,'epsilon',20);
 [energyall,wfall,valley_index]=energyMF(0,0,params);
-% [ave1,ave2,occ,~]=average(energyall,wfall,1,0,params); %for QAHE
+% [ave1,ave2,occ]=average(energyall,wfall,1,0,params); %for QAHE
 
 [ave1,ave2,occ]=average(energyall,wfall,0,1,params); %for QSHE
 % [ldos,enlist,rlist]=LDOS_uc(energyall,wfall,params);
