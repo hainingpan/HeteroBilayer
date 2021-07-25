@@ -1,11 +1,10 @@
-function gap=plotline(energyall,occ,valley_index,params)
+function gap=plotline(energyall,wfall,occ,valley_index,ave1,ave2,params)
 
 energyall_sort=sort(energyall(:));
 Nk=size(params.k,1);
 mu=energyall_sort(Nk*params.nu(1)/(params.nu(2)));
 
 gap=energyall_sort(Nk*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*params.nu(1)/(params.nu(2)));
-
 
 kt=params.bM1*1/3+params.bM2*2/3;
 kb=params.bM1*2/3+params.bM2*1/3;
@@ -22,11 +21,10 @@ kylist=[kt_m_y(1:end-1),m_kb_y(1:end-1),kb_gamma_y];
 segment=sqrt(diff(kxlist).^2+diff(kylist).^2);
 klist=[0,cumsum(segment)];
 
- figure;
- title(sprintf('Gap: %e: (meV)',gap*1000));
+figure;
+[chern_p,chern_m]=chern_gs(ave1,ave2,2,params);
+title(sprintf('Gap: %e: (meV)\n +K:{%.4f,%.4f}\n-K:{%.4f,%.4f}',gap*1000,chern_p,chern_m));
 hold on;
-r=[1,0,0];
-b=[0,0,1];
 for i=1:10
     en_q=griddata(params.k(:,1),params.k(:,2),1000*energyall(:,i),kxlist,kylist);
     valley_q=griddata(params.k(:,1),params.k(:,2),valley_index(:,i),kxlist,kylist);

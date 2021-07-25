@@ -1,5 +1,5 @@
 function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,parameters)
-    n=10;
+    n=5;
     bM1=parameters.bM1;
     bM2=parameters.bM2;
     kt=parameters.kt;
@@ -19,10 +19,10 @@ function [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern]=berrycurvature(level,
     
     Nx=length(xrange);
     Ny=length(yrange);
-    % Nx=parameters.n;
-    % Ny=parameters.n;
+    % Nx=parameters.n+1;
+    % Ny=parameters.n+1;
     % counter=1;
-    for xindex=1:Nx
+    parfor xindex=1:Nx
         kx=xrange(xindex);
         for yindex=1:Ny
             ky=yrange(yindex);

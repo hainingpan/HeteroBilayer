@@ -1,4 +1,4 @@
-function [ave1,ave2,occ,valley_index]=average(energyall,wfall,valley,fermisurface,params)
+function [ave1,ave2,occ]=average(energyall,wfall,valley,fermisurface,params)
     k_beta_set=(params.k);
     Nk=size(k_beta_set,1);
     energyall_sort=sort(energyall(:));
@@ -13,7 +13,7 @@ function [ave1,ave2,occ,valley_index]=average(energyall,wfall,valley,fermisurfac
 
     v_p=sum(abs(wfall(:,:,1:end/2)).^2,3);
     v_m=sum(abs(wfall(:,:,end/2+1:end)).^2,3);
-    valley_index=(v_p-v_m); % 1: +K valley; -1: -K valley
+    % valley_index=(v_p-v_m); % 1: +K valley; -1: -K valley
 
     if valley==1
 %         mu=energyall_sort(Nk*2);
@@ -42,11 +42,4 @@ function [ave1,ave2,occ,valley_index]=average(energyall,wfall,valley,fermisurfac
 
     ave2=ttt2(d_conj,occ_d,[2],[2],[1],[1]); %k_a,q_d,b_d,l_a,t_a,q_g,b_g,l_b,t_b
 
-
-
     occ=double(occ);
-
-
-
-
-

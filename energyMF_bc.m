@@ -1,9 +1,9 @@
-function [energyall,wfall,valley_index]=energyMF(ave1,ave2,params)
+function [wfall_p,wfall_m]=energyMF_bc(ave1,ave2,params)
 b_set=(params.b);
 q_set=(params.q);
 Nb=size(b_set,1);
 Nq=size(q_set,1);
-k_beta_set=params.k;
+k_beta_set=params.k_bc;
 Nk=size(k_beta_set,1);
 kb=params.kb;
 kt=params.kt;
@@ -14,9 +14,10 @@ Vz_t=params.Vz_t;
 %H0
 q_mat=eye(Nq);
 b_mat=eye(Nb);
-energyall=zeros(Nk,Nb*Nq*2*2);
-valley_index=zeros(Nk,Nb*Nq*2*2);
-wfall=zeros(Nk,Nb*Nq*2*2,Nb*Nq*2*2);
+% energyall=zeros(Nk,Nb*Nq*2*2);
+% valley_index=zeros(Nk,Nb*Nq*2*2);
+wfall_p=zeros(Nk,Nb*Nq*2,Nb*Nq*2);
+wfall_m=zeros(Nk,Nb*Nq*2,Nb*Nq*2);
 T=zeros(Nb*Nq*2*2,Nb*Nq*2*2,Nk);
 for k_beta_index=1:Nk
     kx=k_beta_set(k_beta_index,1);
@@ -107,14 +108,10 @@ for k_beta_index=1:Nk
         [vec_m,val_m]=eig(H_m);
         val_p=real(diag(val_p));
         val_m=real(diag(val_m));
-        vec_p_1=[vec_p;0*vec_p];
-        vec_m_1=[0*vec_m;vec_m];
-        val=[val_p;val_m];
-        valley=[ones(size(val_p));-ones(size(val_m))];
-        vec=[vec_p_1,vec_m_1];
-        [val,I]=sort(val);
-        vec=vec(:,I);
-        valley=valley(I);
+        [val_p,I_p]=sort(val_p);
+        [val_m,I_m]=sort(val_m);
+        vec_p=vec_p(:,I_p);
+        vec_m=vec_m(:,I_m);
     else
         [vec,val]=eig(H_tau);
         val=real(diag(val));
@@ -122,11 +119,12 @@ for k_beta_index=1:Nk
         vec=vec(:,I);
         valley_index=0;
     end
-    energyall(k_beta_index,:)=val;
-    valley_index(k_beta_index,:)=valley;
-    for ii=1:Nb*Nq*2*2
-        wfall(k_beta_index,ii,:)=vec(:,ii); %k,n,component
+    % energyall(k_beta_index,:)=val;
+    % valley_index(k_beta_index,:)=valley;
+
+    for ii=1:Nb*Nq*2
+        wfall_p(k_beta_index,ii,:)=vec_p(:,ii); %k,n,component for +K
+        wfall_m(k_beta_index,ii,:)=vec_m(:,ii); %k,n,component for -K
     end
 end
-
 end

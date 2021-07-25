@@ -74,6 +74,12 @@ function params=mainTMD(varargin)
 
     rotate=@(x) [cos(x) -sin(x);sin(x) cos(x)]; %rotate anticlockwise
 
+    [ux,uy]=ndgrid(1:params.n,1:params.n);
+    % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
+    % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
+    params.K_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+    params.K=params.K_index*[params.bM1;params.bM2];
+
     if params.nu==[1,1]
         params.q_index=[[0,0]];
         params.q=params.q_index*[params.bM1;params.bM2];
@@ -83,10 +89,13 @@ function params=mainTMD(varargin)
 
         params.bm1=params.bM1;
         params.bm2=params.bM2;
-        
+
         [ux,uy]=ndgrid(1:params.n,1:params.n);
-        params.k_index=[(2*ux(:)-2)/(2*params.n),(2*uy(:)-2)/(2*params.n)];
-        params.k=params.k_index*[params.bM1;params.bM2];
+        % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
+        % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
+        params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+        params.k=params.k_index*[params.bm1;params.bm2];
+        
     end
 
     if params.nu==[2,1]
@@ -98,15 +107,14 @@ function params=mainTMD(varargin)
 
         params.bm1=params.bM1;
         params.bm2=params.bM2;
-        
+        % params.bm2=(-params.bM1-params.bM2);
+
         [ux,uy]=ndgrid(1:params.n,1:params.n);
         % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
-        params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
-        % params.k_index=[(2*ux(:)-2)/(2*params.n),(2*uy(:)-2)/(2*params.n)];
-        % params.k_index=[(2*ux(:)-7)/(2*params.n),(2*uy(:)-7)/(2*params.n)];
-        params.k=params.k_index*[params.bM1;params.bM2];
+        % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
+        params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+        params.k=params.k_index*[params.bm1;params.bm2];
         
-
 
         % line kappa_t-m-kappa_b-gamma
         % m=(params.kb+params.kt)/2;
@@ -116,7 +124,6 @@ function params=mainTMD(varargin)
         % m_kb_y=linspace(m(2),params.kb(2),40);
         % kb_gamma_x=linspace(params.kb(1),0,40);
         % kb_gamma_y=linspace(params.kb(2),0,40);
-
 
         % kxlist=[kt_m_x,m_kb_x,kb_gamma_x];
         % kylist=[kt_m_y,m_kb_y,kb_gamma_y];
@@ -164,6 +171,12 @@ function params=mainTMD(varargin)
     % params.Q=cellfun(@(x) x(1)*params.bM1+x(2)*params.bM2,Qlist,'UniformOutput',0);
     valley0=params.valley;
     if params.nu~=0
+
+        [ux,uy]=ndgrid(0:params.n,0:params.n);
+        params.k_index_bc=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
+        % params.k_index_bc=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+        params.k_bc=params.k_index*[params.bm1;params.bm2];
+
         [b_a_x,b_b_x]=meshgrid(params.b_index(:,1),params.b_index(:,1));
         [b_a_y,b_b_y]=meshgrid(params.b_index(:,2),params.b_index(:,2));
         params.valley=1;
@@ -197,18 +210,14 @@ function params=mainTMD(varargin)
         [q_g_y,q_d_y,b_g_y,b_d_y]=ndgrid(params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
         q_abs=sqrt((b_g_x+q_g_x-b_d_x-q_d_x).^2+(b_g_y+q_g_y-b_d_y-q_d_y).^2);
         qd=q_abs*params.d;
-        % params.V1=alpha/2*sinc(1i*qd/pi)./cos(1i*qd)*params.d; % a work-around to avoid 0/0, index: q_g,q_d,b_g,b_d
-        %         params.V1(isnan(params.V1))=1/2*params.d;
-        params.V1=alpha/2*tanh(qd+1e-18)./(qd+1e-18)*params.d;
+        params.V1=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
         assert(sum(isnan(params.V1(:)))==0,'V1 has NaN');
 
         [k_a_x,k_b_x,q_a_x,q_d_x,b_a_x,b_d_x]=ndgrid(params.k(:,1),params.k(:,1),params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
         [k_a_y,k_b_y,q_a_y,q_d_y,b_a_y,b_d_y]=ndgrid(params.k(:,2),params.k(:,2),params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
         q_abs=sqrt((k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x).^2+(k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y).^2);
         qd=q_abs*params.d;
-        % params.V2=alpha/2*sinc(1i*qd/pi)./cos(1i*qd)*params.d; % a work-around to avoid 0/0, index: k_a,k_b,q_a,q_d,b_a,b_d
-        params.V2=alpha/2*tanh(qd+1e-18)./(qd+1e-18)*params.d;
-        %params.V2(isnan(params.V2))=1/2*params.d;
+        params.V2=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
         assert(sum(isnan(params.V2(:)))==0,'V2 has NaN');
 
         qindex=[params.bm1;params.bm2]/[params.bM1;params.bM2];
