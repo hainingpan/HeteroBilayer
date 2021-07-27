@@ -1,6 +1,5 @@
 function sweep_vz(nu,epsilon)
-    vz_t_list=-38:-37;
-    % vz_t_list=-38:14;
+    vz_t_list=-38:14;
     chern_p_list=vz_t_list;
     chern_m_list=vz_t_list;
     gap_list=vz_t_list;
