@@ -21,9 +21,10 @@ function params=mainTMD(varargin)
     addParameter(p,'d',5e-9*5.076e6); % gate to sample distance
     addParameter(p,'epsilon',1); % gate to sample distance
     addParameter(p,'Ez',0); % Additional potential to -K
+    addParameter(p,'tsymm',0); % Additional potential to -K
     
     parse(p,varargin{:});
-    params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon);
+    params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm);
 
     delta=(params.a_b-params.a_t)/params.a_t;
     params.aM=params.a_b/sqrt(delta^2+params.theta^2);
@@ -80,6 +81,19 @@ function params=mainTMD(varargin)
     params.K_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
     params.K=params.K_index*[params.bM1;params.bM2];
 
+    m=(params.kb+params.kt)/2;
+    gamma=[0,0];
+    kt_m_x=linspace(params.kt(1),m(1),40);
+    kt_m_y=linspace(params.kt(2),m(2),40);
+    m_kb_x=linspace(m(1),params.kb(1),40);
+    m_kb_y=linspace(m(2),params.kb(2),40);
+    kb_gamma_x=linspace(params.kb(1),gamma(1),40);
+    kb_gamma_y=linspace(params.kb(2),gamma(2),40);
+    k_line_x=[kt_m_x,m_kb_x,kb_gamma_x];
+    k_line_y=[kt_m_y,m_kb_y,kb_gamma_y];
+    params.k_line=[k_line_x(:),k_line_y(:)];
+
+
     if params.nu==[1,1]
         params.q_index=[[0,0]];
         params.q=params.q_index*[params.bM1;params.bM2];
@@ -110,9 +124,9 @@ function params=mainTMD(varargin)
         % params.bm2=(-params.bM1-params.bM2);
 
         [ux,uy]=ndgrid(1:params.n,1:params.n);
-        % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
+        params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
         % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
-        params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+        % params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k=params.k_index*[params.bm1;params.bm2];
         
 
@@ -175,7 +189,7 @@ function params=mainTMD(varargin)
         [ux,uy]=ndgrid(0:params.n,0:params.n);
         params.k_index_bc=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
         % params.k_index_bc=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
-        params.k_bc=params.k_index*[params.bm1;params.bm2];
+        params.k_bc=params.k_index_bc*[params.bm1;params.bm2];
 
         [b_a_x,b_b_x]=meshgrid(params.b_index(:,1),params.b_index(:,1));
         [b_a_y,b_b_y]=meshgrid(params.b_index(:,2),params.b_index(:,2));

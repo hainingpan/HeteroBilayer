@@ -4,7 +4,7 @@ function [ave1,ave2,occ]=average(energyall,wfall,valley,fermisurface,params)
     energyall_sort=sort(energyall(:));
     if fermisurface==1
         mu=energyall_sort(Nk*params.nu(1)/(params.nu(2)));
-        occ=(energyall<mu); %k,n
+        occ=(energyall<=mu); %k,n
     else
         occ=energyall*0;
         occ(:,1:2)=1;
@@ -19,8 +19,7 @@ function [ave1,ave2,occ]=average(energyall,wfall,valley,fermisurface,params)
 %         mu=energyall_sort(Nk*2);
 %         occ=(energyall<mu); %k,n
         occ=(v_p>v_m).*occ;
-    elseif valley==-1
-        
+    elseif valley==-1        
         occ=~((v_p>v_m)).*occ;
     end
     
@@ -41,5 +40,10 @@ function [ave1,ave2,occ]=average(energyall,wfall,valley,fermisurface,params)
     %check hermittian?
 
     ave2=ttt2(d_conj,occ_d,[2],[2],[1],[1]); %k_a,q_d,b_d,l_a,t_a,q_g,b_g,l_b,t_b
-
+    if params.tsymm==1
+        ave2_2=conj(ave2(end:-1:1,end:-1:1,end:-1:1,:,end:-1:1,end:-1:1,end:-1:1,:,end:-1:1));
+        ave2=(ave2+ave2_2)/2;
+        ave2_2=conj(ave2(end:-1:1,end:-1:1,end:-1:1,:,end:-1:1,end:-1:1,end:-1:1,:,end:-1:1));
+        % ave2_err=max(ave2-ave2_2,[],'all');
+    end
     occ=double(occ);

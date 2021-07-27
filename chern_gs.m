@@ -1,27 +1,10 @@
 function [chern_p,chern_m]=chern_gs(ave1,ave2,level,parameters)
 % ignore q for now. ignore nonabelian wilson loop
 
-[wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,parameters);
+[~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc',parameters);
 
 n=sqrt(size(wfall_p_0,1));
-% NL=size(wfall,2);
 
-% valley_p=repmat(valley_index==1,[1,1,size(wfall,3)]);
-% valley_m=repmat(valley_index==-1,[1,1,size(wfall,3)]);
-
-
-% wfall_p=zeros(size(wfall,1),size(wfall,3)/2);
-% wfall_m=zeros(size(wfall,1),size(wfall,3)/2);
-
-% for k_index=1:size(wfall,1)
-%     for l_index=1:2
-%         if valley_index(k_index,l_index)==1
-%             wfall_p(k_index,:)=squeeze(wfall(k_index,l_index,1:end/2));
-%         elseif valley_index(k_index,l_index)==-1
-%             wfall_m(k_index,:)=squeeze(wfall(k_index,l_index,end/2+1:end));
-%         end
-%     end
-% end
 chern_p=zeros(1,level);
 chern_m=zeros(1,level);
 

@@ -1,9 +1,16 @@
-function [wfall_p,wfall_m]=energyMF_bc(ave1,ave2,params)
+function [energyall_p,energyall_m,wfall_p,wfall_m]=energyMF_bc(ave1,ave2,tag,params)
 b_set=(params.b);
 q_set=(params.q);
 Nb=size(b_set,1);
 Nq=size(q_set,1);
-k_beta_set=params.k_bc;
+if strcmp(tag,'bc')
+    k_beta_set=params.k_bc;
+end
+if strcmp(tag,'line')
+    k_beta_set=params.k_line;
+    % k_beta_set=[0,0];
+end
+Nk0=size(params.k,1);
 Nk=size(k_beta_set,1);
 kb=params.kb;
 kt=params.kt;
@@ -14,11 +21,21 @@ Vz_t=params.Vz_t;
 %H0
 q_mat=eye(Nq);
 b_mat=eye(Nb);
-% energyall=zeros(Nk,Nb*Nq*2*2);
+energyall_p=zeros(Nk,Nb*Nq*2);
+energyall_m=zeros(Nk,Nb*Nq*2);
 % valley_index=zeros(Nk,Nb*Nq*2*2);
 wfall_p=zeros(Nk,Nb*Nq*2,Nb*Nq*2);
 wfall_m=zeros(Nk,Nb*Nq*2,Nb*Nq*2);
 T=zeros(Nb*Nq*2*2,Nb*Nq*2*2,Nk);
+
+alpha=0.00729735; % eV*nm
+[k_a_x,k_b_x,q_a_x,q_d_x,b_a_x,b_d_x]=ndgrid(params.k(:,1),k_beta_set(:,1),params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
+[k_a_y,k_b_y,q_a_y,q_d_y,b_a_y,b_d_y]=ndgrid(params.k(:,2),k_beta_set(:,2),params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
+q_abs=sqrt((k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x).^2+(k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y).^2);
+qd=q_abs*params.d;
+V2=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
+
+
 for k_beta_index=1:Nk
     kx=k_beta_set(k_beta_index,1);
     ky=k_beta_set(k_beta_index,2);
@@ -69,7 +86,7 @@ for k_beta_index=1:Nk
     T(:,:,k_beta_index)=-H0.';
 end
 
-A=Nk*Nq*params.area;
+A=Nk0*Nq*params.area;
 if ave1==0
     H1=0;
 else
@@ -86,7 +103,7 @@ end
 if ave2==0
     H2=0;
 else
-    V2=params.V2;  % k_a,k_b,q_a,q_d,b_a,b_d 
+    % V2=params.V2;  % k_a,k_b,q_a,q_d,b_a,b_d 
     %ave2: k_a,q_d,b_d,l_a,t_a,q_g,b_g,l_b,t_b
     V2_ave=ttt2(V2,ave2,[1],[1],[4,6],[2,3]);   %: q_d,b_d,k_b,q_a,b_a,l_a,t_a,q_g,b_g,l_b,t_b
     delta=params.delta_tensor2; %q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
@@ -119,7 +136,8 @@ for k_beta_index=1:Nk
         vec=vec(:,I);
         valley_index=0;
     end
-    % energyall(k_beta_index,:)=val;
+    energyall_p(k_beta_index,:)=val_p;
+    energyall_m(k_beta_index,:)=val_m;
     % valley_index(k_beta_index,:)=valley;
 
     for ii=1:Nb*Nq*2

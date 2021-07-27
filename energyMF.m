@@ -1,4 +1,4 @@
-function [energyall,wfall,valley_index]=energyMF(ave1,ave2,params)
+function [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,params)
 b_set=(params.b);
 q_set=(params.q);
 Nb=size(b_set,1);
@@ -70,6 +70,7 @@ end
 
 A=Nk*Nq*params.area;
 if ave1==0
+    V1_ave_delta=0;
     H1=0;
 else
     V1=params.V1;   % q_g,q_d,b_g,b_d
@@ -83,6 +84,7 @@ else
 end
 
 if ave2==0
+    V2_ave_delta=0;
     H2=0;
 else
     V2=params.V2;  % k_a,k_b,q_a,q_d,b_a,b_d 
@@ -98,6 +100,11 @@ H=T+H1-H2;
 herr=max(sum(abs(H-conj(permute(H,[2,1,3]))),[1,2]));
 assert(herr<1e-12,sprintf("hermitian error: %e\n",herr));
 H=1/2*(H+conj(permute(H,[2,1,3])));
+% check_TR(T,params);
+% if numel(ave1)>1 && numel(ave2)>1
+%     check_TR(H1,params);
+%     check_TR(H2,params);
+% end
 for k_beta_index=1:Nk
     H_tau=H(:,:,k_beta_index);
     if isequal(H_tau(1:end/2,end/2+1:end),0*H_tau(1:end/2,end/2+1:end))
