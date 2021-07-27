@@ -51,6 +51,6 @@ function sweep_vz(nu,epsilon)
         finali_list(vz_t_index)=finali;
     end
 
-    save(sprintf('phase_nu%d,%d_ep%d.mat',params.nu(1),params.nu(2),epsilon),'chern_p_list','chern_m_list','gap_list','final_list','innergap_list','finali_list')
+    save(sprintf('phase_nu%d,%d_ep%d.mat',params.nu(1),params.nu(2),epsilon),'chern_p_list','chern_m_list','gap_list','final_list','innergap_list','finali_list','vz_t_list')
     
     
