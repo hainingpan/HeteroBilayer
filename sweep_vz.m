@@ -13,7 +13,7 @@ function sweep_vz(nu,epsilon)
     for vz_t_index=1:length(vz_t_list)
         vz_t=vz_t_list(vz_t_index);
         disp(vz_t);
-        params=mainTMD('Nmax',2,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t,'vz_b',0,'w',20,'nu',nu,'n',15,'epsilon',epsilon,'tsymm',tsymm);
+        params=mainTMD('Nmax',3,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t,'vz_b',0,'w',20,'nu',nu,'n',15,'epsilon',epsilon,'tsymm',tsymm);
         [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,params);
         if nu==[2,1]
             [ave1,ave2,occ]=average(energyall,wfall,0,1,params); %for QAHE
