@@ -26,6 +26,7 @@ function sweep_vz(nu,epsilon)
         tot_list=[tot];
         
         for i=1:100
+            tic;
             [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,params);    
             [ave1_n,ave2_n,occ]=average(energyall,wfall,0,1,params);
             tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,params);
@@ -35,6 +36,7 @@ function sweep_vz(nu,epsilon)
             if abs(tot_list(end)-tot_list(end-1))<1e-7
                 break;
             end
+            disp(toc)
         end
 
         energyall_sort=sort(energyall(:));
