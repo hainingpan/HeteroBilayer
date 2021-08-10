@@ -70,4 +70,8 @@ for i=1:prod(preserve_size)
     end
     z(i,:)=z_tensor(:);
 end
-z_final=reshape(z,[preserve_size,tenprodsize]);
+if length([preserve_size,tenprodsize])==1 %the final result is simply a vector 
+    z_final=z;
+else
+    z_final=reshape(z,[preserve_size,tenprodsize]);
+end

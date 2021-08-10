@@ -1,4 +1,5 @@
-function [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,epoch,params)
+function [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF_2(ave1,ave2,epoch,params)
+% Gauge transformation to shift the momentum to bottom -> k^2
 b_set=params.b;
 q_set=params.q;
 Nb=size(b_set,1);
@@ -7,7 +8,10 @@ k_beta_set=params.k;
 Nk=size(k_beta_set,1);
 b_index=params.b_index;
 q_index=params.q_index;
-
+kb=params.kb;
+kt=params.kt;
+m_b=params.m_b;
+m_t=params.m_t;
 Vz_b=params.Vz_b;
 Vz_t=params.Vz_t;
 %H0
@@ -16,38 +20,68 @@ b_mat=eye(Nb);
 energyall=zeros(Nk,Nb*Nq*2*2);
 valley_index=zeros(Nk,Nb*Nq*2*2);
 wfall=zeros(Nk,Nb*Nq*2*2,Nb*Nq*2*2);
-% T=zeros(Nb*Nq*2*2,Nb*Nq*2*2,Nk);
+T=zeros(Nb*Nq*2*2,Nb*Nq*2*2,Nk);
 
-
-Delta_b_p=(params.Delta_b_p);
-Delta_t_p=(params.Delta_t_p);
-Delta_T_p=(params.Delta_T_p);
-Delta_TT_p=(params.Delta_TT_p);
-Delta_b_m=(params.Delta_b_m);
-Delta_t_m=(params.Delta_t_m);
-Delta_T_m=(params.Delta_T_m);
-Delta_TT_m=(params.Delta_TT_m);
-
+Delta_b_p=kron(params.Delta_b_p,q_mat);
+Delta_t_p=kron(params.Delta_t_p,q_mat);
+Delta_T_p=kron(params.Delta_T_p,q_mat);
+Delta_TT_p=kron(params.Delta_TT_p,q_mat);
+Delta_b_m=kron(params.Delta_b_m,q_mat);
+Delta_t_m=kron(params.Delta_t_m,q_mat);
+Delta_T_m=kron(params.Delta_T_m,q_mat);
+Delta_TT_m=kron(params.Delta_TT_m,q_mat);
 Delta_p=[Delta_b_p,Delta_T_p;Delta_TT_p,Delta_t_p];
 Delta_m=[Delta_b_m,Delta_T_m;Delta_TT_m,Delta_t_m];
-
 Delta_tau=[Delta_p,0*Delta_p;0*Delta_p,Delta_m];
-
 Vz_b_mat=Vz_b*kron(b_mat,q_mat);
 Vz_t_mat=Vz_t*kron(b_mat,q_mat);
 Vz_mat=[Vz_b_mat,0*Vz_b_mat;0*Vz_b_mat,Vz_t_mat];
 Vz_tau=[Vz_mat,0*Vz_mat;0*Vz_mat,Vz_mat];
-if epoch==0
-    S_tau=params.S_tau;
+if params.SDW~=0 && epoch==0
+    [q_a_x,b_a_x,q_b_x,b_b_x]=ndgrid(q_index(:,1),b_index(:,1),q_index(:,1),b_index(:,1));
+    [q_a_y,b_a_y,q_b_y,b_b_y]=ndgrid(q_index(:,2),b_index(:,2),q_index(:,2),b_index(:,2));
+    h1=b_a_x+q_a_x-b_b_x-q_b_x;
+    h2=b_a_y+q_a_y-b_b_y-q_b_y;
+    S_pm=kron([1,0;0,0],reshape(S(h1(:),h2(:),1,-1,params),[Nq*Nb,Nq*Nb]));
+    S_mp=kron([1,0;0,0],reshape(S(h1(:),h2(:),-1,1,params),[Nq*Nb,Nq*Nb]));
+    S_pp=kron([1,0;0,0],reshape(S(h1(:),h2(:),1,1,params),[Nq*Nb,Nq*Nb]));
+    S_mm=kron([1,0;0,0],reshape(S(h1(:),h2(:),-1,-1,params),[Nq*Nb,Nq*Nb]));
+    S_tau=[S_pp,S_pm;S_mp,S_mm];
 else
     S_tau=0;
 end
 
-shift=params.shift;
-T0=T_gen(k_beta_set,shift,params);
-T=T0+repmat(Delta_tau,[1,1,Nk])+repmat(Vz_tau,[1,1,Nk])+repmat(S_tau,[1,1,Nk]);
+for k_beta_index=1:Nk
+    kx=k_beta_set(k_beta_index,1);
+    ky=k_beta_set(k_beta_index,2);
+    [qx_set_grid,bx_set_grid]=ndgrid(q_set(:,1),b_set(:,1));
+    [qy_set_grid,by_set_grid]=ndgrid(q_set(:,2),b_set(:,2));
+    
+    k_b_p_x=kx+qx_set_grid(:)+bx_set_grid(:);
+    k_b_p_y=ky+qy_set_grid(:)+by_set_grid(:);
 
-T=-permute(T,[2,1,3]);
+    k_b_m_x=kx+qx_set_grid(:)+bx_set_grid(:);
+    k_b_m_y=ky+qy_set_grid(:)+by_set_grid(:);
+
+    k_t_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-(kt(1)-kb(1));
+    k_t_p_y=ky+qy_set_grid(:)+by_set_grid(:)-(kt(2)-kb(2));
+
+    k_t_m_x=kx+qx_set_grid(:)+bx_set_grid(:)+(kt(1)-kb(1));
+    k_t_m_y=ky+qy_set_grid(:)+by_set_grid(:)+(kt(2)-kb(2));
+
+    T_b_m=-1/(2*m_b)*diag(k_b_m_x.^2+k_b_m_y.^2);
+    T_t_m=-1/(2*m_t)*diag(k_t_m_x.^2+k_t_m_y.^2);
+    T_m=[T_b_m,0*T_b_m;0*T_b_m,T_t_m];
+
+    T_b_p=-1/(2*m_b)*diag(k_b_p_x.^2+k_b_p_y.^2);
+    T_t_p=-1/(2*m_t)*diag(k_t_p_x.^2+k_t_p_y.^2);
+    T_p=[T_b_p,0*T_b_p;0*T_b_p,T_t_p];
+
+    T_tau=[T_p,0*T_m;0*T_m,T_m];
+
+    H0=T_tau+Delta_tau+Vz_tau+S_tau;
+    T(:,:,k_beta_index)=-H0.';
+end
 
 A=Nk*Nq*params.area;
 if ave1==0
@@ -119,3 +153,4 @@ for k_beta_index=1:Nk
 end
 
 end
+

@@ -1,6 +1,6 @@
-function [neighborlist,r]=generate_shell(nshell)
-a1=[0,1];
-a2=[cos(-pi/6),sin(-pi/6)];
+function neighborlist=generate_shell(nshell)
+% For the usage of bM1, and bM2, which are 120 separated
+
 counter=1;
 
 for yindex=-nshell:nshell

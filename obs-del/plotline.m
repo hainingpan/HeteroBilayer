@@ -2,9 +2,9 @@ function gap=plotline(energyall,wfall,occ,valley_index,ave1,ave2,params)
 
 energyall_sort=sort(energyall(:));
 Nk=size(params.k,1);
-mu=energyall_sort(Nk*params.nu(1)/(params.nu(2)));
+mu=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
 
-gap=energyall_sort(Nk*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*params.nu(1)/(params.nu(2)));
+gap=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
 
 kt=params.bM1*1/3+params.bM2*2/3;
 kb=params.bM1*2/3+params.bM2*1/3;

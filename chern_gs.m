@@ -1,7 +1,7 @@
-function [chern_p,chern_m]=chern_gs(ave1,ave2,level,parameters)
+function [chern_p,chern_m]=chern_gs(ave1,ave2,level,epoch,parameters)
 % ignore q for now. ignore nonabelian wilson loop
 
-[~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc',parameters);
+[~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc',epoch,parameters);
 
 n=sqrt(size(wfall_p_0,1));
 

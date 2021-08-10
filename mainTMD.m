@@ -20,11 +20,12 @@ function params=mainTMD(varargin)
     addParameter(p,'n',15); % n*n grid in momentum space
     addParameter(p,'d',5e-9*5.076e6); % gate to sample distance
     addParameter(p,'epsilon',1); % gate to sample distance
-    addParameter(p,'Ez',0); % Additional potential to -K
-    addParameter(p,'tsymm',0); % Additional potential to -K
+    addParameter(p,'tsymm',0); % T-symm is enforced 
+    addParameter(p,'shift',0); % shift to Kb
+    addParameter(p,'SDW',0); % SDW
     
     parse(p,varargin{:});
-    params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm);
+    params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm,'shift',p.Results.shift,'SDW',p.Results.SDW);
 
     delta=(params.a_b-params.a_t)/params.a_t;
     params.aM=params.a_b/sqrt(delta^2+params.theta^2);
@@ -38,36 +39,11 @@ function params=mainTMD(varargin)
     params.g6=[2*pi/params.aM,(2*pi)/(sqrt(3)*params.aM)];
     params.bM1=params.g5;
     params.bM2=params.g1;
-    params.kb=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
-    params.kt=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
-    % if params.valley==-1
-    %     params.shift=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
-    % else
-    %     params.shift=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
-    % end
-    % params.kb=params.kb-params.shift;
-    % params.kt=params.kt-params.shift;
-
-    % Nrange=-params.Nmax:params.Nmax;
-%     [h1index,h2index]=meshgrid(Nrange,Nrange);
     neighbor_index=generate_shell(params.Nmax);
-    h1index=neighbor_index(:,1);
-    h2index=neighbor_index(:,2);
-    params.h1index=h1index;
-    params.h2index=h2index;
-    [h1matX,h1matY]=meshgrid(h1index(:));
-    [h2matX,h2matY]=meshgrid(h2index(:));
-    h1mat=h1matX-h1matY;
-    h2mat=h2matX-h2matY;
-    % params.DeltaTmat=reshape(arrayfun(@(h1,h2) DeltaT(h1,h2,params),h1mat(:),h2mat(:)),length(h1index),length(h1index));
-    params.DeltaTmat=reshape(DeltaT(h1mat(:),h2mat(:),params),length(h1index),length(h1index));
-    % params.DeltaTTmat=reshape(arrayfun(@(h1,h2) DeltaTT(h1,h2,params),h1mat(:),h2mat(:)),length(h1index),length(h1index));
-    params.DeltaTTmat=reshape(DeltaTT(h1mat(:),h2mat(:),params),length(h1index),length(h1index));
-    % params.Deltatmat=reshape(arrayfun(@(h1,h2) Deltal(h1,h2,-1,params),h1mat(:),h2mat(:)),length(h1index),length(h1index));
-    params.Deltatmat=reshape(Deltal(h1mat(:),h2mat(:),-1,params),length(h1index),length(h1index));
-    % params.Deltabmat=reshape(arrayfun(@(h1,h2) Deltal(h1,h2,1,params),h1mat(:),h2mat(:)),length(h1index),length(h1index));
-    params.Deltabmat=reshape(Deltal(h1mat(:),h2mat(:),1,params),length(h1index),length(h1index));
     params.area=sqrt(3)/2*params.aM^2;
+
+    % params.kb=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
+    % params.kt=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
 
     if mod(params.n,3)~=0
         warning('n={%d} is not multiple of 3, which does not go through K point',params.n);
@@ -75,135 +51,180 @@ function params=mainTMD(varargin)
 
     rotate=@(x) [cos(x) -sin(x);sin(x) cos(x)]; %rotate anticlockwise
 
-    [ux,uy]=ndgrid(1:params.n,1:params.n);
-    % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
-    % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
-    params.K_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
-    params.K=params.K_index*[params.bM1;params.bM2];
+    params.valley_polarized=0;    % unpolarized filling initially
+    params.fermisurface=1;  % filled by Fermi surface initially
+    params.SDW=0;
+    params.auto_generate_q=1;
 
+    % for single-particle
+    if params.nu==0  
+        [ux,uy]=ndgrid(1:params.n,1:params.n);
+        params.K_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+        params.K=params.K_index*[params.bM1;params.bM2];
+        ailist=[0,0];
+        am_index=eye(2);
+    end
+
+
+    % QAHE
+    if params.nu==[1,1]
+        ailist=[0,0];
+        am_index=eye(2);
+        params.valley_polarized=1;
+        params.fermisurface=0;
+    end
+    % FM_x without Wigner Crystal
+    if params.nu==[2,2]
+        ailist=[0,0];
+        am_index=eye(2);
+        params.SDW=10e-3;
+        q0_index=[0,0];
+        params.Sq_index=[q0_index];
+    end
+
+    % QSHE
+    if params.nu==[2,1]
+        ailist=[0,0];
+        am_index=eye(2);
+        params.tsymm=1;
+    end
+
+    %trivial Mott insulator
+    if params.nu==[3,3] 
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.SDW=10e-3;   % the strength of SDW 
+        % q0=[(params.kt-params.kb);(params.kt-params.kb)*rotate(2*pi/3);(params.kt-params.kb)*rotate(4*pi/3)];
+        Q=4*pi/(3*params.aM)*[1,0];
+        q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
+
+        % q0_index=[0,0];
+        % params.Sq_index=[q0_index];
+
+        % params.auto_generate_q=0;
+        % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
+    end
+
+    % h1 bM1+ h2 bM2
+    h1index=neighbor_index(:,1);
+    h2index=neighbor_index(:,2);
+    params.h1index=h1index;
+    params.h2index=h2index;
+    [h1matX,h1matY]=ndgrid(h1index(:));
+    [h2matX,h2matY]=ndgrid(h2index(:));
+
+    params.DeltaTmat=DeltaT(h1matX-h1matY,h2matX-h2matY,params);
+    params.DeltaTTmat=DeltaTT(h1matX-h1matY,h2matX-h2matY,params);
+    params.Deltabmat=Deltal(h1matX-h1matY,h2matX-h2matY,1,params);
+    params.Deltatmat=Deltal(h1matX-h1matY,h2matX-h2matY,-1,params);
+    
+    valley0=params.valley;
+    R=[[0,-1];[1,0]];
+    bm_index=1/size(ailist,1)*R'*am_index*R;  %check oneNotes
+    params.am1=am_index(1,:)*[params.aM1;params.aM2];
+    params.am2=am_index(2,:)*[params.aM1;params.aM2];
+    params.bm1=bm_index(1,:)*[params.bM1;params.bM2];
+    params.bm2=bm_index(2,:)*[params.bM1;params.bM2];
+    
+    params.kb=-1/3*params.bm1+1/3*params.bm2;
+    params.kt=1/3*params.bm1+2/3*params.bm2;
     m=(params.kb+params.kt)/2;
     gamma=[0,0];
     kt_m_x=linspace(params.kt(1),m(1),40);
     kt_m_y=linspace(params.kt(2),m(2),40);
     m_kb_x=linspace(m(1),params.kb(1),40);
     m_kb_y=linspace(m(2),params.kb(2),40);
-    kb_gamma_x=linspace(params.kb(1),gamma(1),40);
-    kb_gamma_y=linspace(params.kb(2),gamma(2),40);
+    kb_gamma_x=linspace(params.kb(1),gamma(1),80);
+    kb_gamma_y=linspace(params.kb(2),gamma(2),80);
     k_line_x=[kt_m_x,m_kb_x,kb_gamma_x];
     k_line_y=[kt_m_y,m_kb_y,kb_gamma_y];
     params.k_line=[k_line_x(:),k_line_y(:)];
-
-
-    if params.nu==[1,1]
-        params.q_index=[[0,0]];
+    
+    if params.nu~=0
+        if params.auto_generate_q==1
+            %square [0,1]x[0,1] transformed to new shape
+            new_pts=int8([[0,0];[1,0];[1,1];[0,1]]/bm_index);
+            %check whether inside the transformed square
+            xrange=min(new_pts(:,1)):max(new_pts(:,1));
+            yrange=min(new_pts(:,2)):max(new_pts(:,2));
+            [xgrid,ygrid]=ndgrid(xrange,yrange);
+            [in_sq,on_sq]=inpolygon(xgrid(:), ygrid(:), new_pts(:,1), new_pts(:,2));
+            in_sq=in_sq&(~on_sq);
+            q_index_sq=[xgrid(in_sq),ygrid(in_sq)];
+            %check whether on the line [0,0]->[1,0]
+            if new_pts(2,1)-1>0
+                xlist=int8(linspace(1,new_pts(2,1)-1,new_pts(2,1)-1));
+                xlist_rem=mod(xlist*new_pts(2,2),new_pts(2,1));
+                in_line1_x=xlist_rem(xlist_rem==0);
+                in_line1_y=in_line1_x*new_pts(2,2)/new_pts(2,1);
+                q_index_line1=[in_line1_x(:),in_line1_y(:)];
+            else
+                q_index_line1=[];
+            end
+            %check whether on the line [0,0]->[0,1]
+            if new_pts(3,1)-1>0
+                xlist=int8(linspace(1,new_pts(3,1)-1,new_pts(3,1)-1));
+                xlist_rem=mod(xlist*new_pts(3,2),new_pts(3,1));
+                in_line2_x=xlist_rem(xlist_rem==0);
+                in_line2_y=in_line2_x*new_pts(3,2)/new_pts(3,1);
+                q_index_line2=[in_line2_x(:),in_line2_y(:)];
+            else
+                q_index_line2=[];
+            end
+            q_index=[0,0;q_index_sq;q_index_line1;q_index_line2];
+            assert(size(q_index,1)==size(ailist,1),'q_index and ailist are not equal length');
+            q_index=double(q_index)*bm_index;
+        
+            params.q_index=q_index;
+        end
         params.q=params.q_index*[params.bM1;params.bM2];
+        Nq=size(params.q,1);
 
         params.b_index=neighbor_index;
         params.b=params.b_index*[params.bM1;params.bM2];
-
-        params.bm1=params.bM1;
-        params.bm2=params.bM2;
+        Nb=size(params.b,1);
 
         [ux,uy]=ndgrid(1:params.n,1:params.n);
         % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
         % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
         params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k=params.k_index*[params.bm1;params.bm2];
-        
-    end
-
-    if params.nu==[2,1]
-        params.q_index=[[0,0]];
-        params.q=params.q_index*[params.bM1;params.bM2];
-
-        params.b_index=neighbor_index;
-        params.b=params.b_index*[params.bM1;params.bM2];
-
-        params.bm1=params.bM1;
-        params.bm2=params.bM2;
-        % params.bm2=(-params.bM1-params.bM2);
-
-        [ux,uy]=ndgrid(1:params.n,1:params.n);
-        params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
-        % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
-        % params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
-        params.k=params.k_index*[params.bm1;params.bm2];
-        
-
-        % line kappa_t-m-kappa_b-gamma
-        % m=(params.kb+params.kt)/2;
-        % kt_m_x=linspace(params.kt(1),m(1),40);
-        % kt_m_y=linspace(params.kt(2),m(2),40);
-        % m_kb_x=linspace(m(1),params.kb(1),40);
-        % m_kb_y=linspace(m(2),params.kb(2),40);
-        % kb_gamma_x=linspace(params.kb(1),0,40);
-        % kb_gamma_y=linspace(params.kb(2),0,40);
-
-        % kxlist=[kt_m_x,m_kb_x,kb_gamma_x];
-        % kylist=[kt_m_y,m_kb_y,kb_gamma_y];
-
-        % params.k=[kxlist',kylist'];
-
-        % segment=sqrt(diff(kxlist).^2+diff(kylist).^2);
-        % params.klist=[0,cumsum(segment)];
-    end
-
-
-
-    % am1=am1index*[params.aM1;params.aM2];
-    % am2=am2index*[params.aM1;params.aM2];
-    % params.bm1=2*pi/abs(length(ailist)*params.aM^2*sqrt(3)/2)*am1*rotate(-pi/2);
-    % params.bm2=2*pi/abs(length(ailist)*params.aM^2*sqrt(3)/2)*am2*rotate(pi/2);
-    % qindex=[params.bm1;params.bm2]/[params.bM1;params.bM2];
-    % manhattandist=1;
-    % Qlist={[0,0]};
-    % done=0;
-    % while 1  %Very ugly code
-    %     for i=-manhattandist:manhattandist
-    %         if abs(i)==manhattandist
-    %             jlist=[0];
-    %         else
-    %             jlist=[-(manhattandist-abs(i)),(manhattandist-abs(i))];
-    %         end
-    %         for j=jlist
-    %         qtmp=[i,j]*qindex;
-    %         if all(qtmp>=-1e-10) & all(qtmp<1-1e-10)
-    %             Qlist=[Qlist,qtmp];
-    %         end
-    %         if length(Qlist)==length(ailist)
-    %             done=1;
-    %             break;
-    %         end
-    %         end
-    %     end
-    %     if done==1
-    %         break;
-    %     end
-    %     manhattandist=manhattandist+1;
-    % end
-    % params.Qindex=Qlist;
-    % params.Q=cellfun(@(x) x(1)*params.bM1+x(2)*params.bM2,Qlist,'UniformOutput',0);
-    valley0=params.valley;
-    if params.nu~=0
 
         [ux,uy]=ndgrid(0:params.n,0:params.n);
         params.k_index_bc=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
         % params.k_index_bc=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k_bc=params.k_index_bc*[params.bm1;params.bm2];
 
-        [b_a_x,b_b_x]=meshgrid(params.b_index(:,1),params.b_index(:,1));
-        [b_a_y,b_b_y]=meshgrid(params.b_index(:,2),params.b_index(:,2));
+        [q_a_x,b_a_x,q_b_x,b_b_x]=ndgrid(params.q_index(:,1),params.b_index(:,1),params.q_index(:,1),params.b_index(:,1));
+        [q_a_y,b_a_y,q_b_y,b_b_y]=ndgrid(params.q_index(:,2),params.b_index(:,2),params.q_index(:,2),params.b_index(:,2));
         params.valley=1;
-        params.Delta_T_p=reshape(DeltaT(b_a_x-b_b_x,b_a_y-b_b_y,params),size(params.b_index,1),size(params.b_index,1));
-        params.Delta_TT_p=reshape(DeltaTT(b_a_x-b_b_x,b_a_y-b_b_y,params),size(params.b_index,1),size(params.b_index,1));
-        params.Delta_b_p=reshape(Deltal(b_a_x-b_b_x,b_a_y-b_b_y,1,params),size(params.b_index,1),size(params.b_index,1));
-        params.Delta_t_p=reshape(Deltal(b_a_x-b_b_x,b_a_y-b_b_y,-1,params),size(params.b_index,1),size(params.b_index,1));
+        h1=reshape(b_a_x+q_a_x-b_b_x-q_b_x,[Nq*Nb,Nq*Nb]);
+        h2=reshape(b_a_y+q_a_y-b_b_y-q_b_y,[Nq*Nb,Nq*Nb]);
+        params.Delta_T_p=DeltaT(h1,h2,params);
+        params.Delta_TT_p=DeltaTT(h1,h2,params);
+        params.Delta_b_p=Deltal(h1,h2,1,params);
+        params.Delta_t_p=Deltal(h1,h2,-1,params);
         params.valley=-1;
-        params.Delta_T_m=reshape(DeltaT(b_a_x-b_b_x,b_a_y-b_b_y,params),size(params.b_index,1),size(params.b_index,1));
-        params.Delta_TT_m=reshape(DeltaTT(b_a_x-b_b_x,b_a_y-b_b_y,params),size(params.b_index,1),size(params.b_index,1));
-        params.Delta_b_m=reshape(Deltal(b_a_x-b_b_x,b_a_y-b_b_y,1,params),size(params.b_index,1),size(params.b_index,1));
-        params.Delta_t_m=reshape(Deltal(b_a_x-b_b_x,b_a_y-b_b_y,-1,params),size(params.b_index,1),size(params.b_index,1));
+        params.Delta_T_m=DeltaT(h1,h2,params);
+        params.Delta_TT_m=DeltaTT(h1,h2,params);
+        params.Delta_b_m=Deltal(h1,h2,1,params);
+        params.Delta_t_m=Deltal(h1,h2,-1,params);
         params.valley=valley0;
+
+        if params.SDW~=0
+            [q_a_x,b_a_x,q_b_x,b_b_x]=ndgrid(params.q_index(:,1),params.b_index(:,1),params.q_index(:,1),params.b_index(:,1));
+            [q_a_y,b_a_y,q_b_y,b_b_y]=ndgrid(params.q_index(:,2),params.b_index(:,2),params.q_index(:,2),params.b_index(:,2));
+            h1=b_a_x+q_a_x-b_b_x-q_b_x;
+            h2=b_a_y+q_a_y-b_b_y-q_b_y;
+            S_pm=kron([1,0;0,0],reshape(S(h1(:),h2(:),1,-1,params),[Nq*Nb,Nq*Nb]));
+            S_mp=kron([1,0;0,0],reshape(S(h1(:),h2(:),-1,1,params),[Nq*Nb,Nq*Nb]));
+            S_pp=kron([1,0;0,0],reshape(S(h1(:),h2(:),1,1,params),[Nq*Nb,Nq*Nb]));
+            S_mm=kron([1,0;0,0],reshape(S(h1(:),h2(:),-1,-1,params),[Nq*Nb,Nq*Nb]));
+            params.S_tau=[S_pp,S_pm;S_mp,S_mm];
+        else
+            params.S_tau=0;
+        end
 
         % For the detailed def, check oneNotes
         [q_a_x,q_b_x,q_g_x,q_d_x,b_a_x,b_b_x,b_g_x,b_d_x]=ndgrid(params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1));
@@ -236,7 +257,6 @@ function params=mainTMD(varargin)
 
         qindex=[params.bm1;params.bm2]/[params.bM1;params.bM2];
 
-
         Qlistmat=params.q;
         Qshift1=mod(Qlistmat+qindex(1,:),1);
         Qshift2=mod(Qlistmat+qindex(2,:),1);
@@ -258,7 +278,4 @@ function params=mainTMD(varargin)
 
         params.perm1=perm1;
         params.perm2=perm2;
-
-
-
     end
