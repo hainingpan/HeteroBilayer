@@ -30,6 +30,6 @@ for i=1:100
     end
 end
 
-save('final_2,2.mat','gap_list','tot_list','s0','sx','sy','sz');
+save('final_2,2.mat','gap_list','tot_list','energyall','ave1','ave2','V1_ave_delta','V2_ave_delta','ave1_n','ave2_n','i','params');
 
 

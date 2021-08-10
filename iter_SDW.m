@@ -59,9 +59,9 @@ for i=1:100
     ave1=ave1_n;
     ave2=ave2_n;
     drawnow;
-    if abs(tot_list(end)-tot_list(end-1))<1e-5
+    if abs(tot_list(end)-tot_list(end-1))<1e-8
         break;
     end
 end
-save('final_3,3.mat','gap_list','tot_list','s0','sx','sy','sz');
+save(sprintf('nu_%d,%d_Nmax%d.mat',params.nu(1),params.nu(2),params.Nmax),'gap_list','tot_list','s0','sx','sy','sz','energyall','ave1','ave2','V1_ave_delta','V2_ave_delta','ave1_n','ave2_n','i','params');
 
