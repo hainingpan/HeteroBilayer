@@ -15,6 +15,7 @@ tot_list=[tot];
 
 
 for i=1:100
+    disp(i)
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,i,params);    
     [ave1_n,ave2_n,occ]=average(energyall,wfall,i,params);
     % gap=plotline(energyall,wfall,occ,valley_index,ave1,ave2,params);
@@ -25,7 +26,7 @@ for i=1:100
     plot(tot_list(2:end)*1e3);
     ave1=ave1_n;
     ave2=ave2_n;
-    if abs(tot_list(end)-tot_list(end-1))<1e-5
+    if abs(tot_list(end)-tot_list(end-1))<1e-8
         break;
     end
 end
