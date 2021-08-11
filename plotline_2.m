@@ -1,4 +1,4 @@
-function [gap,tot,fig1]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+function [gap,tot,fig1,fig2]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
 
     energyall_sort=sort(energyall(:));
     Nk=size(params.k,1);
@@ -12,11 +12,11 @@ function [gap,tot,fig1]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta
 
     segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
     klist=[0;cumsum(segment)];
-    
+    %% Chern number
     chern_p=[0];
     chern_m=[0];
     % [chern_p,chern_m]=chern_gs(ave1,ave2,1,epoch,params);
-    
+    %% Band structure
     if ismember('f',output)
         fig1=figure;
         title(sprintf('Gap: %e (meV) E: %e (meV)\n +K:{%.4f}\n-K:{%.4f}',gap*1000,tot*1000,chern_p,chern_m));
@@ -37,9 +37,35 @@ function [gap,tot,fig1]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta
         xticklabels({'\kappa_t','m','\kappa_b','\gamma'});
         xlim([klist(1),klist(40+40-1+80-1)])
         ylim([1000*min(energyall_p(:,1)),1000*max(energyall_p(:,4*Nai))])
+        xlabel('|k_m|')
+        ylabel('E (meV)')
         drawnow;
     else
         fig1=0;
+    end
+    %% Spin
+    if ismember('s',output)
+        
+    [X_index,Y_index]=meshgrid(linspace(0,1,22));
+    [sitesX_index,sitesY_index]=meshgrid(-1:3);
+    rmap=[X_index(:),Y_index(:)]*[params.am1;params.am2];
+    rsite=[sitesX_index(:),sitesY_index(:)]*[params.aM1;params.aM2];
+    rmap_x=rmap(:,1);
+    rmap_y=rmap(:,2);
+    [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,1,params);
+    fig2=figure;
+    hold on;
+    scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled')
+    quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)),(sy(:)));
+    daspect([1,1,1]);
+    scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
+    xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
+    ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
+    xlabel('x/|a_M|')
+    ylabel('y/|a_M|')
+    cb=colorbar
+    cb.Title.String='S_z'
+    drawnow
     end
     
 end
