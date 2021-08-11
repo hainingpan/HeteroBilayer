@@ -89,7 +89,7 @@ function params=mainTMD(varargin)
         params.tsymm=1;
     end
 
-    %trivial Mott insulator
+    %trivial Mott insulator, 120 AF
     if params.nu==[3,3] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
@@ -105,6 +105,23 @@ function params=mainTMD(varargin)
         % params.auto_generate_q=0;
         % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
     end
+    
+    if params.nu==[4,4] 
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.SDW=10e-3;   % the strength of SDW 
+        % q0=[(params.kt-params.kb);(params.kt-params.kb)*rotate(2*pi/3);(params.kt-params.kb)*rotate(4*pi/3)];
+        % Q=4*pi/(3*params.aM)*[1,0];
+        % q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        % params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
+
+        q0_index=[0,0];
+        params.Sq_index=[q0_index];
+
+        % params.auto_generate_q=0;
+        % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
+    end
+
 
     % h1 bM1+ h2 bM2
     h1index=neighbor_index(:,1);
