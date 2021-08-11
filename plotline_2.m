@@ -1,4 +1,4 @@
-function [gap,tot,fig1,fig2]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
 
     energyall_sort=sort(energyall(:));
     Nk=size(params.k,1);
@@ -13,13 +13,19 @@ function [gap,tot,fig1,fig2]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_
     segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
     klist=[0;cumsum(segment)];
     %% Chern number
-    chern_p=[0];
-    chern_m=[0];
-    % [chern_p,chern_m]=chern_gs(ave1,ave2,1,epoch,params);
+
+    if ismember('c',output)
+        [chern_p,chern_m]=chern_gs(ave1,ave2,1,epoch,params);
+        chern_str=sprintf('\n+K:{%.4f}\n-K:{%.4f}',chern_p,chern_m);
+    else
+        chern_str='';
+    end
+
     %% Band structure
     if ismember('f',output)
-        fig1=figure;
-        title(sprintf('Gap: %e (meV) E: %e (meV)\n +K:{%.4f}\n-K:{%.4f}',gap*1000,tot*1000,chern_p,chern_m));
+        fig_band=figure;
+        energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
+        title(strcat(energy_str,chern_str));
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
         for i=1:10
@@ -41,31 +47,32 @@ function [gap,tot,fig1,fig2]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_
         ylabel('E (meV)')
         drawnow;
     else
-        fig1=0;
+        fig_band=0;
     end
     %% Spin
     if ismember('s',output)
-        
-    [X_index,Y_index]=meshgrid(linspace(0,1,22));
-    [sitesX_index,sitesY_index]=meshgrid(-1:3);
-    rmap=[X_index(:),Y_index(:)]*[params.am1;params.am2];
-    rsite=[sitesX_index(:),sitesY_index(:)]*[params.aM1;params.aM2];
-    rmap_x=rmap(:,1);
-    rmap_y=rmap(:,2);
-    [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,1,params);
-    fig2=figure;
-    hold on;
-    scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled')
-    quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)),(sy(:)));
-    daspect([1,1,1]);
-    scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
-    xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
-    ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
-    xlabel('x/|a_M|')
-    ylabel('y/|a_M|')
-    cb=colorbar
-    cb.Title.String='S_z'
-    drawnow
+        [X_index,Y_index]=meshgrid(linspace(0,1,22));
+        [sitesX_index,sitesY_index]=meshgrid(-1:3);
+        rmap=[X_index(:),Y_index(:)]*[params.am1;params.am2];
+        rsite=[sitesX_index(:),sitesY_index(:)]*[params.aM1;params.aM2];
+        rmap_x=rmap(:,1);
+        rmap_y=rmap(:,2);
+        [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,1,params);
+        fig_spin=figure;
+        hold on;
+        scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled')
+        quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)),(sy(:)));
+        daspect([1,1,1]);
+        scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
+        xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
+        ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
+        xlabel('x/|a_M|')
+        ylabel('y/|a_M|')
+        cb=colorbar;
+        cb.Title.String='S_z';
+        drawnow
+    else
+        fig_spin=0;
     end
     
 end

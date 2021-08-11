@@ -56,6 +56,7 @@ function params=mainTMD(varargin)
     params.SDW=0;
     params.auto_generate_q=1;
     params.span='b';
+    params.chern='';
 
     % for single-particle
     if params.nu==0  
@@ -73,6 +74,7 @@ function params=mainTMD(varargin)
         am_index=eye(2);
         params.valley_polarized=1;
         params.fermisurface=0;
+        params.chern='c';
     end
     % FM_x without Wigner Crystal
     if params.nu==[2,2]
@@ -88,6 +90,7 @@ function params=mainTMD(varargin)
         ailist=[0,0];
         am_index=eye(2);
         params.tsymm=1;
+        params.chern='c';
     end
 
     %trivial Mott insulator, 120 AF, +1 chirality

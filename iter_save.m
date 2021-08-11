@@ -23,7 +23,7 @@ function iter_save(nu,Nmax,w,Nk,vz_t)
         end
     end
     fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f',params.nu(1),params.nu(2),params.Nmax,params.w,Nk,vz_t);
-    [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,'f',params);
+    [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,strcat('fs',params.chern),params);
     savefig(fig_band,strcat(fn,'_band.fig'))
     savefig(fig_spin,strcat(fn,'_spin.fig'))
 
