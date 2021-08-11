@@ -23,6 +23,7 @@ function sweep_vz(nu,epsilon)
         
         Nk=size(params.k,1);
         Nq=size(params.q,1);
+        Nai=size(params.ailist,1);  % The expansion of super cell
         tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1,ave2,params);
         tot_list=[tot];
         
@@ -41,8 +42,8 @@ function sweep_vz(nu,epsilon)
         end
 
         energyall_sort=sort(energyall(:));
-        gap=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
-        innergap=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)))-energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2))-1);
+        gap=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
+        innergap=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)))-energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2))-1);
         finali=i;
         [chern_p,chern_m]=chern_gs(ave1,ave2,2,params);
 

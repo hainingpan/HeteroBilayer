@@ -1,4 +1,6 @@
 % function iter_SDW(nu,Nmax)
+Nmax=3;
+nu=[8,8];
 params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',-40,'vz_b',0,'w',0,'nu',nu,'n',15,'epsilon',25,'shift',1);
 [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
 [ave1,ave2,occ]=average(energyall,wfall,0,params); 

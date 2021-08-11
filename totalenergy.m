@@ -3,6 +3,7 @@ b_set=(params.b);
 q_set=(params.q);
 Nb=size(b_set,1);
 Nq=size(q_set,1);
+Nai=size(params.ailist,1);  % The expansion of super cell
 k_beta_set=params.k;
 Nk=size(k_beta_set,1);
 Vz_b=params.Vz_b;
@@ -40,10 +41,11 @@ T=T0+repmat(Delta_tau,[1,1,Nk])+repmat(Vz_tau,[1,1,Nk])+repmat(S_tau,[1,1,Nk]);
 T=-permute(T,[2,1,3]);
 T_tensor=reshape(T,[Nq,Nb,2,2,Nq,Nb,2,2,Nk]); %q_b,b_b,l_b,t_b,q_a,b_a,l_a,t_a,k_b
 %ave2_n k_b,q_b,b_b,l_b,t_b,q_a,b_a,l_a,t_a
-H0=sum(permute(ave2_n,[2,3,4,5,6,7,8,9,1]).*T_tensor,'all');
+% H0=sum(permute(ave2_n,[2,3,4,5,6,7,8,9,1]).*T_tensor,'all');
+H0=collapse(permute(ave2_n,[2,3,4,5,6,7,8,9,1]).*T_tensor,1:length(size(T_tensor)));
 
-A=Nk*Nq*params.area;
-if V1_ave_delta==0
+A=Nk*Nai*params.area;
+if isa(V1_ave_delta,'double') && V1_ave_delta==0
     H1=0;
 else
     % V1=params.V1;   % q_g,q_d,b_g,b_d
@@ -52,9 +54,9 @@ else
     % delta=params.delta_tensor1; %q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
     % V1_ave_delta=ttt2(V1_ave,delta,[1,2,3,4],[3,4,7,8],[],[]);  %q_a,q_b,b_a,b_b
     %ave1_b: q_b,q_a,b_b,b_a
-    H1=sum(permute(ave1_n,[2,1,4,3]).*V1_ave_delta,'all')/(2*A*params.epsilon);
+    H1=collapse(permute(ave1_n,[2,1,4,3]).*V1_ave_delta,1:length(size(V1_ave_delta)))/(2*A*params.epsilon);
 end
-if V2_ave_delta==0
+if isa(V2_ave_delta,'double') && V2_ave_delta==0
     H2=0;
 else
     % V2=params.V2;  % k_a,k_b,q_a,q_d,b_a,b_d 
@@ -63,11 +65,11 @@ else
     % delta=params.delta_tensor2; %q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
     % V2_ave_delta=ttt2(V2_ave,delta,[1,2,8,9],[4,8,3,7],[4,5],[1,5]); % q_a,b_a,k_b,l_a,t_a,l_b,t_b,q_b,b_b
     %ave2_b: k_b,q_b,b_b,l_b,t_b,q_a,b_a,l_a,t_a
-    H2=sum(permute(V2_ave_delta,[3,8,9,6,7,1,2,4,5]).*ave2_n,'all')/(2*A*params.epsilon);
+    H2=collapse(permute(V2_ave_delta,[3,8,9,6,7,1,2,4,5]).*ave2_n,1:length(size(ave2_n)))/(2*A*params.epsilon);
 end
 
 tot=H0+H1-H2;
 tot_err=abs(imag(tot));
 assert(tot_err<1e-12,sprintf("hermitian error: %e\n",tot_err));
-tot=real(tot)/(Nk*Nq); %energy per unit cell
+tot=real(tot)/(Nk*Nai); %energy per unit cell
 

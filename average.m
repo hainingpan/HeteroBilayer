@@ -3,13 +3,14 @@ function [ave1,ave2,occ]=average(energyall,wfall,epoch,params)
     Nk=size(k_beta_set,1);
     q_set=(params.q);
     Nq=size(q_set,1);
+    Nai=size(params.ailist,1);
     b_set=params.b;
     Nb=size(b_set,1);
 
     energyall_sort=sort(energyall(:));
     if epoch==0
         if params.fermisurface==1
-            mu=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
+            mu=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
             occ=(energyall<=mu); %k,n
         else
             occ=energyall*0;
@@ -24,7 +25,7 @@ function [ave1,ave2,occ]=average(energyall,wfall,epoch,params)
             occ=~((v_p>v_m)).*occ;
         end
     else
-        mu=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
+        mu=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
         occ=(energyall<=mu); %k,n
     end
 

@@ -3,10 +3,11 @@ b_set=params.b;
 q_set=params.q;
 Nb=size(b_set,1);
 Nq=size(q_set,1);
+Nai=size(params.ailist,1);  % The expansion of super cell
 k_beta_set=params.k;
 Nk=size(k_beta_set,1);
-b_index=params.b_index;
-q_index=params.q_index;
+% b_index=params.b_index;
+% q_index=params.q_index;
 
 Vz_b=params.Vz_b;
 Vz_t=params.Vz_t;
@@ -49,8 +50,8 @@ T=T0+repmat(Delta_tau,[1,1,Nk])+repmat(Vz_tau,[1,1,Nk])+repmat(S_tau,[1,1,Nk]);
 
 T=-permute(T,[2,1,3]);
 
-A=Nk*Nq*params.area;
-if ave1==0
+A=Nk*Nai*params.area;
+if isa(ave1,'double') && ave1==0
     V1_ave_delta=0;
     H1=0;
 else
@@ -59,12 +60,12 @@ else
     V1_ave=V1.*ave1; %q_g,q_d,b_g,b_d
     delta=params.delta_tensor1; %q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
     V1_ave_delta=ttt2(V1_ave,delta,[1,2,3,4],[3,4,7,8],[],[]);  %q_a,q_b,b_a,b_b
-    hartree=reshape(permute(V1_ave_delta,[1,3,2,4]),Nq*Nb,Nq*Nb); %q_a,b_a,q_b,b_b
-    H1=(kron(eye(4),hartree));
+    hartree=reshape(permute(V1_ave_delta,[1,3,2,4]),[Nq*Nb,Nq*Nb]); %q_a,b_a,q_b,b_b
+    H1=(kron(eye(4),hartree.data));
     H1=repmat(H1,[1,1,Nk])/(A*params.epsilon);
 end
 
-if ave2==0
+if isa(ave1,'double') && ave2==0
     V2_ave_delta=0;
     H2=0;
 else
@@ -75,6 +76,7 @@ else
     V2_ave_delta=ttt2(V2_ave,delta,[1,2,8,9],[4,8,3,7],[4,5],[1,5]); % q_a,b_a,k_b,l_a,t_a,l_b,t_b,q_b,b_b
     H2=permute(V2_ave_delta,[1,2,4,5,8,9,6,7,3]); %q_a,b_a,l_a,t_a,q_b,b_b,l_b,t_b,k_b
     H2=reshape(H2,[Nq*Nb*2*2,Nq*Nb*2*2,Nk])/(A*params.epsilon);
+    H2=H2.data;
 end
 H=T+H1-H2;
 

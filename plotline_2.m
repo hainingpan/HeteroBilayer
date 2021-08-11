@@ -2,11 +2,12 @@ function [gap,tot,fig1]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta
 
     energyall_sort=sort(energyall(:));
     Nk=size(params.k,1);
-    Nq=size(params.q,1);
-    mu=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
-    mu1=energyall_sort(1+Nk*Nq*params.nu(1)/(params.nu(2)));
+    % Nq=size(params.q,1);
+    Nai=size(params.ailist,1);  % The expansion of super cell
+    mu=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
+    mu1=energyall_sort(1+Nk*Nai*params.nu(1)/(params.nu(2)));
     
-    gap=energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*Nq*params.nu(1)/(params.nu(2)));
+    gap=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2))+1)-energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
     tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
 
     segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
@@ -35,7 +36,7 @@ function [gap,tot,fig1]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta
         xticks(klist([1,40,40+40-1,40+40-1+80-1]))
         xticklabels({'\kappa_t','m','\kappa_b','\gamma'});
         xlim([klist(1),klist(40+40-1+80-1)])
-        ylim([1000*min(energyall_p(:,1)),1000*max(energyall_p(:,4*Nq))])
+        ylim([1000*min(energyall_p(:,1)),1000*max(energyall_p(:,4*Nai))])
         drawnow;
     else
         fig1=0;

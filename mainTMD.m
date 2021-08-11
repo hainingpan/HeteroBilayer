@@ -55,6 +55,7 @@ function params=mainTMD(varargin)
     params.fermisurface=1;  % filled by Fermi surface initially
     params.SDW=0;
     params.auto_generate_q=1;
+    params.span='b';
 
     % for single-particle
     if params.nu==0  
@@ -105,7 +106,25 @@ function params=mainTMD(varargin)
         % params.auto_generate_q=0;
         % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
     end
-    
+
+    %trivial Mott insulator, 120 AF, spanned by q
+    if params.nu==[6,6] 
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.SDW=10e-3;   % the strength of SDW 
+        % q0=[(params.kt-params.kb);(params.kt-params.kb)*rotate(2*pi/3);(params.kt-params.kb)*rotate(4*pi/3)];
+        Q=4*pi/(3*params.aM)*[1,0];
+        q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
+        params.span='q';
+        % q0_index=[0,0];
+        % params.Sq_index=[q0_index];
+
+        params.auto_generate_q=0;
+        % params.q_index=neighbor_index;
+        % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
+    end
+    % FM_x  Wigner Crystal
     if params.nu==[4,4] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
@@ -119,6 +138,23 @@ function params=mainTMD(varargin)
         params.Sq_index=[q0_index];
 
         % params.auto_generate_q=0;
+        % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
+    end
+    %trivial Mott insulator, 120 AF, spanned by q
+    if params.nu==[8,8] 
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.SDW=10e-3;   % the strength of SDW 
+        % q0=[(params.kt-params.kb);(params.kt-params.kb)*rotate(2*pi/3);(params.kt-params.kb)*rotate(4*pi/3)];
+        % Q=4*pi/(3*params.aM)*[1,0];
+        % q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        % params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
+        params.span='q';
+        q0_index=[0,0];
+        params.Sq_index=[q0_index];
+
+        params.auto_generate_q=0;
+        % params.q_index=neighbor_index;
         % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
     end
 
@@ -138,6 +174,7 @@ function params=mainTMD(varargin)
     
     valley0=params.valley;
     R=[[0,-1];[1,0]];
+    params.ailist=ailist;
     bm_index=1/size(ailist,1)*R'*am_index*R;  %check oneNotes
     params.am1=am_index(1,:)*[params.aM1;params.aM2];
     params.am2=am_index(2,:)*[params.aM1;params.aM2];
@@ -194,11 +231,17 @@ function params=mainTMD(varargin)
             q_index=double(q_index)*bm_index;
         
             params.q_index=q_index;
+        else
+            params.q_index=neighbor_index*bm_index;
         end
-        params.q=params.q_index*[params.bM1;params.bM2];
+        params.q=params.q_index*[params.bM1;params.bM2]; %% !!! This may be a problem when bm1 and bm2 are not separeted by 120 deg; in such case, it needs to generate a neighbor_index by inputing the two reciprocal lattice vectors.
         Nq=size(params.q,1);
 
-        params.b_index=neighbor_index;
+        if params.span=='b'
+            params.b_index=neighbor_index;
+        elseif params.span=='q'
+            params.b_index=[[0,0]];
+        end
         params.b=params.b_index*[params.bM1;params.bM2];
         Nb=size(params.b,1);
 
@@ -250,12 +293,12 @@ function params=mainTMD(varargin)
         delta_y=-q_a_y-b_a_y+q_b_y+b_b_y+q_g_y+b_g_y-q_d_y-b_d_y;
         delta_tensor=abs(delta_x)<1e-10 & abs(delta_y)<1e-10;
         params.delta_tensor1=int8(delta_tensor); %-q_a-b_a+q_b+b_b+q_g+b_g-q_d-b_d, index: q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
-
+        params.delta_tensor1=tensor(params.delta_tensor1,[Nq,Nq,Nq,Nq,Nb,Nb,Nb,Nb]);
         delta_x=-q_a_x-b_a_x+q_b_x+b_b_x-q_g_x-b_g_x+q_d_x+b_d_x;
         delta_y=-q_a_y-b_a_y+q_b_y+b_b_y-q_g_y-b_g_y+q_d_y+b_d_y;
         delta_tensor=abs(delta_x)<1e-10 & abs(delta_y)<1e-10;
         params.delta_tensor2=int8(delta_tensor); %-q_a-b_a+q_b+b_b-q_g-b_g+q_d+b_d, index: q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
-
+        params.delta_tensor2=tensor(params.delta_tensor2,[Nq,Nq,Nq,Nq,Nb,Nb,Nb,Nb]);
         alpha=0.00729735; % eV*nm
 
         [q_g_x,q_d_x,b_g_x,b_d_x]=ndgrid(params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
@@ -264,35 +307,37 @@ function params=mainTMD(varargin)
         qd=q_abs*params.d;
         params.V1=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
         assert(sum(isnan(params.V1(:)))==0,'V1 has NaN');
-
+        params.V1=tensor(params.V1,[Nq,Nq,Nb,Nb]);
+        Nk=size(params.k,1);
         [k_a_x,k_b_x,q_a_x,q_d_x,b_a_x,b_d_x]=ndgrid(params.k(:,1),params.k(:,1),params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
         [k_a_y,k_b_y,q_a_y,q_d_y,b_a_y,b_d_y]=ndgrid(params.k(:,2),params.k(:,2),params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
         q_abs=sqrt((k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x).^2+(k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y).^2);
         qd=q_abs*params.d;
         params.V2=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
         assert(sum(isnan(params.V2(:)))==0,'V2 has NaN');
+        params.V2=tensor(params.V2,[Nk,Nk,Nq,Nq,Nb,Nb]);
 
-        qindex=[params.bm1;params.bm2]/[params.bM1;params.bM2];
+        % qindex=[params.bm1;params.bm2]/[params.bM1;params.bM2];
 
-        Qlistmat=params.q;
-        Qshift1=mod(Qlistmat+qindex(1,:),1);
-        Qshift2=mod(Qlistmat+qindex(2,:),1);
+        % Qlistmat=params.q;
+        % Qshift1=mod(Qlistmat+qindex(1,:),1);
+        % Qshift2=mod(Qlistmat+qindex(2,:),1);
 
-        Qshift1=mod(Qshift1,1);
-        Qshift2=mod(Qshift2,1);
+        % Qshift1=mod(Qshift1,1);
+        % Qshift2=mod(Qshift2,1);
 
-        perm1=zeros(size(Qshift1,1));
-        for i=1:size(Qshift1,1)
-            j=find(abs(sum(abs(Qlistmat(i,:)-Qshift1).^2,2))<1e-5);
-            perm1(i,j)=1;
-        end
+        % perm1=zeros(size(Qshift1,1));
+        % for i=1:size(Qshift1,1)
+        %     j=find(abs(sum(abs(Qlistmat(i,:)-Qshift1).^2,2))<1e-5);
+        %     perm1(i,j)=1;
+        % end
 
-        perm2=zeros(size(Qshift2,1));
-        for i=1:size(Qshift2,1)
-            j=find(abs(sum(abs(Qlistmat(i,:)-Qshift2).^2,2))<1e-5);
-            perm2(i,j)=1;
-        end 
+        % perm2=zeros(size(Qshift2,1));
+        % for i=1:size(Qshift2,1)
+        %     j=find(abs(sum(abs(Qlistmat(i,:)-Qshift2).^2,2))<1e-5);
+        %     perm2(i,j)=1;
+        % end 
 
-        params.perm1=perm1;
-        params.perm2=perm2;
+        % params.perm1=perm1;
+        % params.perm2=perm2;
     end

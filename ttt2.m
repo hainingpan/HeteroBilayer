@@ -51,13 +51,13 @@ for i=1:prod(preserve_size)
     if length(remdims_x)==1
         x_reshape=x_mat(i,:);
     else
-        x_reshape=reshape(x_mat(i,:),xsize(remdims_x));
+        x_reshape=tensor(x_mat(i,:),xsize(remdims_x));
     end
     
     if length(remdims_y)==1
         y_reshape=y_mat(i,:);
     else
-        y_reshape=reshape(y_mat(i,:),ysize(remdims_y));
+        y_reshape=tensor(y_mat(i,:),ysize(remdims_y));
     end
     if length(remdims_x)==1
         z_tensor=ttv(tensor(y_reshape),x_reshape',ind_y);
@@ -73,5 +73,6 @@ end
 if length([preserve_size,tenprodsize])==1 %the final result is simply a vector 
     z_final=z;
 else
-    z_final=reshape(z,[preserve_size,tenprodsize]);
+    % z_final=reshape(z,[preserve_size,tenprodsize]);
+    z_final=tensor(z,[preserve_size,tenprodsize]);
 end
