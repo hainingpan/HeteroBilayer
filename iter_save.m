@@ -1,5 +1,5 @@
-function iter_save(nu,Nmax)
-    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',-40,'vz_b',0,'w',0,'nu',nu,'n',15,'epsilon',25,'shift',1);
+function iter_save(nu,Nmax,w,Nk)
+    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',-40,'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',25,'shift',1);
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
     [ave1,ave2,occ]=average(energyall,wfall,0,params); 
     [X_index,Y_index]=meshgrid(linspace(0,1,22));
@@ -42,6 +42,6 @@ function iter_save(nu,Nmax)
     ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]);
     savefig(fig1,sprintf('nu_%d,%d_Nmax%d_spin.fig',params.nu(1),params.nu(2),params.Nmax))
 
-    save(sprintf('nu_%d,%d_Nmax%d.mat',params.nu(1),params.nu(2),params.Nmax),'gap_list','tot_list','i');
+    save(sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d.mat',params.nu(1),params.nu(2),params.Nmax,params.w,params.Nk),'gap_list','tot_list','i');
     
     
