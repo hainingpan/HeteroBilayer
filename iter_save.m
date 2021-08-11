@@ -42,6 +42,6 @@ function iter_save(nu,Nmax,w,Nk)
     ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]);
     savefig(fig1,sprintf('nu_%d,%d_Nmax%d_spin.fig',params.nu(1),params.nu(2),params.Nmax))
 
-    save(sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d.mat',params.nu(1),params.nu(2),params.Nmax,params.w,params.Nk),'gap_list','tot_list','i');
+    save(sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d.mat',params.nu(1),params.nu(2),params.Nmax,params.w,Nk),'gap_list','tot_list','i');
     
     
