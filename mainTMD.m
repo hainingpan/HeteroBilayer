@@ -68,7 +68,7 @@ function params=mainTMD(varargin)
     end
 
 
-    % QAHE
+    % QAHE(FM_z), spanned by b
     if params.nu==[1,1]
         ailist=[0,0];
         am_index=eye(2);
@@ -76,21 +76,50 @@ function params=mainTMD(varargin)
         params.fermisurface=0;
         params.chern='c';
     end
-    % FM_x without Wigner Crystal
+    % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.valley_polarized=1;
+        params.fermisurface=0;
+    end
+    % QAHE(FM_z) WC, spanned by q
+    if params.nu==[4,4]
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.valley_polarized=1;
+        params.fermisurface=0;
+        params.span='q';
+        params.auto_generate_q=0;
+    end
+
+    % FM_x without Wigner Crystal, spanned by b
+    if params.nu==[-1,-1]
         ailist=[0,0];
         am_index=eye(2);
         params.SDW=10e-3;
         q0_index=[0,0];
         params.Sq_index=[q0_index];
     end
+    
+    % FM_x  Wigner Crystal, cascaded
+    if params.nu==[-2,-2] 
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.SDW=10e-3;   % the strength of SDW 
+        q0_index=[0,0];
+        params.Sq_index=[q0_index];
+    end
 
-    % QSHE
-    if params.nu==[2,1]
-        ailist=[0,0];
-        am_index=eye(2);
-        params.tsymm=1;
-        params.chern='c';
+    % FM_x  Wigner Crystal, spanned by q
+    if params.nu==[-4,-4] 
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.SDW=10e-3;   % the strength of SDW 
+        params.span='q';
+        q0_index=[0,0];
+        params.Sq_index=[q0_index];
+        params.auto_generate_q=0;
     end
 
     %trivial Mott insulator, 120 AF, +1 chirality
@@ -112,11 +141,11 @@ function params=mainTMD(varargin)
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
         params.span='q';
-
         params.auto_generate_q=0;
     end
+
     %trivial Mott insulator, 120 AF, -1 chirality
-    if params.nu==[5,5] 
+    if params.nu==[-3,-3] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
         params.SDW=10e-3;   % the strength of SDW 
@@ -125,7 +154,7 @@ function params=mainTMD(varargin)
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
     end
     %trivial Mott insulator, 120 AF, spanned by q, -1 chirality
-    if params.nu==[10,10] 
+    if params.nu==[-6,-6] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
         params.SDW=10e-3;   % the strength of SDW 
@@ -135,38 +164,13 @@ function params=mainTMD(varargin)
         params.span='q';
         params.auto_generate_q=0;
     end
-    % FM_x  Wigner Crystal
-    if params.nu==[4,4] 
-        ailist=[[0,0];[1,0];[2,0]];
-        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
-        % q0=[(params.kt-params.kb);(params.kt-params.kb)*rotate(2*pi/3);(params.kt-params.kb)*rotate(4*pi/3)];
-        % Q=4*pi/(3*params.aM)*[1,0];
-        % q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
-        % params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
 
-        q0_index=[0,0];
-        params.Sq_index=[q0_index];
-
-        % params.auto_generate_q=0;
-        % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
-    end
-    %trivial Mott insulator, 120 AF, spanned by q
-    if params.nu==[8,8] 
-        ailist=[[0,0];[1,0];[2,0]];
-        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
-        % q0=[(params.kt-params.kb);(params.kt-params.kb)*rotate(2*pi/3);(params.kt-params.kb)*rotate(4*pi/3)];
-        % Q=4*pi/(3*params.aM)*[1,0];
-        % q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
-        % params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
-        params.span='q';
-        q0_index=[0,0];
-        params.Sq_index=[q0_index];
-
-        params.auto_generate_q=0;
-        % params.q_index=neighbor_index;
-        % params.q_index=[[2/3,1/3];[0,0];[-2/3,-1/3]];
+    % QSHE
+    if params.nu==[2,1]
+        ailist=[0,0];
+        am_index=eye(2);
+        params.tsymm=1;
+        params.chern='c';
     end
 
 

@@ -14,8 +14,8 @@ function [ave1,ave2,occ]=average(energyall,wfall,epoch,params)
             occ=(energyall<=mu); %k,n
         else
             occ=energyall*0;
-            occ(:,1:2)=1;
-            occ(:,3:end)=0;
+            occ(:,1:2*Nai)=1;
+            occ(:,2*Nai+1:end)=0;
         end
         v_p=sum(abs(wfall(:,:,1:end/2)).^2,3);
         v_m=sum(abs(wfall(:,:,end/2+1:end)).^2,3);

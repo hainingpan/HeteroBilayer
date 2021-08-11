@@ -28,7 +28,7 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
         title(strcat(energy_str,chern_str));
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
-        for i=1:10
+        for i=1:20
             scatter(klist,1e3*energyall_p(:,i),5,'r','filled');
             if energyall_m~=0
                 scatter(klist,1e3*energyall_m(:,i),5,'b','filled');
