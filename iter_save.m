@@ -1,5 +1,5 @@
-function iter_save(nu,Nmax,w,Nk)
-    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',-40,'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',25,'shift',1);
+function iter_save(nu,Nmax,w,Nk,vz_t)
+    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t,'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',25,'shift',1);
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
     [ave1,ave2,occ]=average(energyall,wfall,0,params); 
     [X_index,Y_index]=meshgrid(linspace(0,1,22));
@@ -31,7 +31,7 @@ function iter_save(nu,Nmax,w,Nk)
     end
     
     [gap,tot,fig_band]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,'f',params);
-    savefig(fig_band,sprintf('nu_%d,%d_Nmax%d_band.fig',params.nu(1),params.nu(2),params.Nmax))
+    savefig(fig_band,sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f_band.fig',params.nu(1),params.nu(2),params.Nmax))
     fig1=figure;
     [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,1,params);
     quiver(rmap_x(:),rmap_y(:),(sx(:)),(sy(:)));
@@ -40,8 +40,8 @@ function iter_save(nu,Nmax,w,Nk)
     scatter(rsite(:,1),rsite(:,2));
     xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]);
     ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]);
-    savefig(fig1,sprintf('nu_%d,%d_Nmax%d_spin.fig',params.nu(1),params.nu(2),params.Nmax))
+    savefig(fig1,sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f_spin.fig',params.nu(1),params.nu(2),params.Nmax))
 
-    save(sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d.mat',params.nu(1),params.nu(2),params.Nmax,params.w,Nk),'gap_list','tot_list','i');
+    save(sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f.mat',params.nu(1),params.nu(2),params.Nmax,params.w,Nk,vz_t),'gap_list','tot_list','i');
     
     
