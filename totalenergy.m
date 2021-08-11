@@ -69,5 +69,5 @@ end
 tot=H0+H1-H2;
 tot_err=abs(imag(tot));
 assert(tot_err<1e-12,sprintf("hermitian error: %e\n",tot_err));
-tot=real(tot)/(Nk*Nb*Nq); %energy per unit cell
+tot=real(tot)/(Nk*Nq); %energy per unit cell
 
