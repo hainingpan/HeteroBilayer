@@ -42,8 +42,8 @@ function params=mainTMD(varargin)
     neighbor_index=generate_shell(params.Nmax);
     params.area=sqrt(3)/2*params.aM^2;
 
-    % params.kb=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
-    % params.kt=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
+    params.Kb=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
+    params.Kt=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
 
     if mod(params.n,3)~=0
         warning('n={%d} is not multiple of 3, which does not go through K point',params.n);
