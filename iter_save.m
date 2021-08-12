@@ -18,7 +18,7 @@ function iter_save(nu,Nmax,w,Nk,vz_t)
         ave1=ave1_n;
         ave2=ave2_n;
         drawnow;
-        if abs(tot_list(end)-tot_list(end-1))<1e-1
+        if abs(tot_list(end)-tot_list(end-1))<1e-10
             break;
         end
     end
