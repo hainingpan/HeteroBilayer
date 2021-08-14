@@ -11,6 +11,9 @@ if strcmp(tag,'line')
     k_beta_set=params.k_line;
     % k_beta_set=[0,0];
 end
+if strcmp(tag,'dense')
+    k_beta_set=params.k_dense;
+end
 Nk0=size(params.k,1);
 Nk=size(k_beta_set,1);
 Vz_b=params.Vz_b;

@@ -22,7 +22,7 @@ function params=mainTMD(varargin)
     addParameter(p,'epsilon',1); % gate to sample distance
     addParameter(p,'tsymm',0); % T-symm is enforced 
     addParameter(p,'shift',0); % shift to Kb
-    addParameter(p,'SDW',0); % SDW
+    addParameter(p,'SDW',10e-3); % SDW
     
     parse(p,varargin{:});
     params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm,'shift',p.Results.shift,'SDW',p.Results.SDW);
@@ -53,10 +53,9 @@ function params=mainTMD(varargin)
 
     params.valley_polarized=0;    % unpolarized filling initially
     params.fermisurface=1;  % filled by Fermi surface initially
-    params.SDW=0;
     params.auto_generate_q=1;
     params.span='b';
-    params.chern='';
+    params.chern='c';
 
     % for single-particle
     if params.nu==0  
@@ -65,6 +64,7 @@ function params=mainTMD(varargin)
         params.K=params.K_index*[params.bM1;params.bM2];
         ailist=[0,0];
         am_index=eye(2);
+        params.SDW=0;
     end
 
 
@@ -75,6 +75,7 @@ function params=mainTMD(varargin)
         params.valley_polarized=1;
         params.fermisurface=0;
         params.chern='c';
+        params.SDW=0;
     end
     % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
@@ -82,6 +83,7 @@ function params=mainTMD(varargin)
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
         params.valley_polarized=1;
         params.fermisurface=0;
+        params.SDW=0;
     end
     % QAHE(FM_z) WC, spanned by q
     if params.nu==[4,4]
@@ -91,13 +93,14 @@ function params=mainTMD(varargin)
         params.fermisurface=0;
         params.span='q';
         params.auto_generate_q=0;
+        params.SDW=0;
     end
 
     % FM_x without Wigner Crystal, spanned by b
     if params.nu==[-1,-1]
         ailist=[0,0];
         am_index=eye(2);
-        params.SDW=10e-3;
+        % params.SDW=10e-3;
         q0_index=[0,0];
         params.Sq_index=[q0_index];
     end
@@ -106,7 +109,7 @@ function params=mainTMD(varargin)
     if params.nu==[-2,-2] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
+        % params.SDW=10e-3;   % the strength of SDW 
         q0_index=[0,0];
         params.Sq_index=[q0_index];
     end
@@ -115,7 +118,7 @@ function params=mainTMD(varargin)
     if params.nu==[-4,-4] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
+        % params.SDW=10e-3;   % the strength of SDW 
         params.span='q';
         q0_index=[0,0];
         params.Sq_index=[q0_index];
@@ -126,7 +129,7 @@ function params=mainTMD(varargin)
     if params.nu==[3,3] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
+        % params.SDW=10e-3;   % the strength of SDW 
         Q=4*pi/(3*params.aM)*[1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
@@ -136,7 +139,7 @@ function params=mainTMD(varargin)
     if params.nu==[6,6] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
+        % params.SDW=10e-3;   % the strength of SDW 
         Q=4*pi/(3*params.aM)*[1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
@@ -148,7 +151,7 @@ function params=mainTMD(varargin)
     if params.nu==[-3,-3] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
+        % params.SDW=10e-3;   % the strength of SDW 
         Q=4*pi/(3*params.aM)*[-1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
@@ -157,7 +160,7 @@ function params=mainTMD(varargin)
     if params.nu==[-6,-6] 
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.SDW=10e-3;   % the strength of SDW 
+        % params.SDW=10e-3;   % the strength of SDW 
         Q=4*pi/(3*params.aM)*[-1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
@@ -171,6 +174,7 @@ function params=mainTMD(varargin)
         am_index=eye(2);
         params.tsymm=1;
         params.chern='c';
+        params.SDW=0;
     end
 
 
@@ -265,6 +269,10 @@ function params=mainTMD(varargin)
         % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
         params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k=params.k_index*[params.bm1;params.bm2];
+
+        [ux,uy]=ndgrid(1:21,1:21);
+        params.k_dense_index=[(ux(:)-1)/(21),(uy(:)-1)/(21)];
+        params.k_dense=params.k_dense_index*[params.bm1;params.bm2];
 
         [ux,uy]=ndgrid(0:params.n,0:params.n);
         params.k_index_bc=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
