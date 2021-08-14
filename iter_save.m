@@ -7,7 +7,7 @@ function iter_save(nu,Nmax,w,Nk,vz_t,SDW)
     
     gap_list=[gap];
     tot_list=[tot];
-    sprint("%d: Gap=%e (meV), E=%e (meV)",i,gap,tot);
+    sprint("%d: Gap=%e (meV), E=%e (meV)",0,gap,tot);
     for i=1:500
         [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,i,params);    
         [ave1_n,ave2_n,occ]=average(energyall,wfall,i,params);

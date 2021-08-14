@@ -9,7 +9,7 @@ params=mainTMD('SDW',1e-3,'Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'
 fig_tot=figure;
 gap_list=[gap];
 tot_list=[tot];
-sprint("%d: Gap=%e (meV), E=%e (meV)",i,gap,tot);
+sprint("%d: Gap=%e (meV), E=%e (meV)",0,gap,tot);
 for i=1:100
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,i,params);    
     [ave1_n,ave2_n,occ]=average(energyall,wfall,i,params);
