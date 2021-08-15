@@ -1,9 +1,17 @@
 function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
 
-    energyall_sort=sort(energyall(:));
     Nk=size(params.k,1);
-    % Nq=size(params.q,1);
     Nai=size(params.ailist,1);  % The expansion of super cell
+    if ismember('g',output)
+        [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'dense',epoch,params);
+        if numel(energyall_m)>1
+            energyall_sort=sort([energyall_p(:);energyall_m(:)]);
+        else
+            energyall_sort=sort(energyall_p(:));
+        end
+    else
+        energyall_sort=sort(energyall(:));
+    end
     mu_v=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
     mu_c=energyall_sort(1+Nk*Nai*params.nu(1)/(params.nu(2)));
     mu_v_index=find(energyall==mu_v,1);
@@ -11,21 +19,18 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
     [mu_v_k_index,mu_v_l_index]=ind2sub(size(energyall),mu_v_index);
     [mu_c_k_index,mu_c_l_index]=ind2sub(size(energyall),mu_c_index);
     gap_str=sprintf('\nv:%d,%d c:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
-    
     gap=mu_c-mu_v;
     tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
 
-    segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
-    klist=[0;cumsum(segment)];
     %% Chern number
-
     if ismember('c',output)
         [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params);
         chern_str=sprintf('\n+K:{%.4f} -K:{%.4f}',chern_p,chern_m);
     else
         chern_str='';
     end
-
+    
+    
     %% Band structure
     if ismember('f',output)
         fig_band=figure;
@@ -34,6 +39,8 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
         title(strcat(energy_str,chern_str,gap_str,epoch_str));
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
+        segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
+        klist=[0;cumsum(segment)];
         for i=1:20
             scatter(klist,1e3*energyall_p(:,i),5,'r','filled');
             if energyall_m~=0
