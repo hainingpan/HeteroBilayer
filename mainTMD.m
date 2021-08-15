@@ -311,17 +311,18 @@ function params=mainTMD(varargin)
 
         % For the detailed def, check oneNotes
         [q_a_x,q_b_x,q_g_x,q_d_x,b_a_x,b_b_x,b_g_x,b_d_x]=ndgrid(params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1));
-        [q_a_y,q_b_y,q_g_y,q_d_y,b_a_y,b_b_y,b_g_y,b_d_y]=ndgrid(params.q_index(:,2),params.q_index(:,2),params.q_index(:,2),params.q_index(:,2),params.b_index(:,2),params.b_index(:,2),params.b_index(:,2),params.b_index(:,2));
         delta_x=-q_a_x-b_a_x+q_b_x+b_b_x+q_g_x+b_g_x-q_d_x-b_d_x;
+        [q_a_y,q_b_y,q_g_y,q_d_y,b_a_y,b_b_y,b_g_y,b_d_y]=ndgrid(params.q_index(:,2),params.q_index(:,2),params.q_index(:,2),params.q_index(:,2),params.b_index(:,2),params.b_index(:,2),params.b_index(:,2),params.b_index(:,2));
         delta_y=-q_a_y-b_a_y+q_b_y+b_b_y+q_g_y+b_g_y-q_d_y-b_d_y;
-        delta_tensor=abs(delta_x)<1e-10 & abs(delta_y)<1e-10;
-        params.delta_tensor1=int8(delta_tensor); %-q_a-b_a+q_b+b_b+q_g+b_g-q_d-b_d, index: q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
-        params.delta_tensor1=tensor(params.delta_tensor1,[Nq,Nq,Nq,Nq,Nb,Nb,Nb,Nb]);
+        delta_tensor1=int8((abs(delta_x)<1e-10) & (abs(delta_y)<1e-10)); %-q_a-b_a+q_b+b_b+q_g+b_g-q_d-b_d, index: q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
+        clear delta_x delta_y
+        params.delta_tensor1=tensor(delta_tensor1,[Nq,Nq,Nq,Nq,Nb,Nb,Nb,Nb]);
         delta_x=-q_a_x-b_a_x+q_b_x+b_b_x-q_g_x-b_g_x+q_d_x+b_d_x;
+        clear q_a_x b_a_x q_b_x b_b_x q_g_x b_g_x q_d_x b_d_x
         delta_y=-q_a_y-b_a_y+q_b_y+b_b_y-q_g_y-b_g_y+q_d_y+b_d_y;
-        delta_tensor=abs(delta_x)<1e-10 & abs(delta_y)<1e-10;
-        params.delta_tensor2=int8(delta_tensor); %-q_a-b_a+q_b+b_b-q_g-b_g+q_d+b_d, index: q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
-        params.delta_tensor2=tensor(params.delta_tensor2,[Nq,Nq,Nq,Nq,Nb,Nb,Nb,Nb]);
+        clear q_a_y b_a_y q_b_y b_b_y q_g_y b_g_y q_d_y b_d_y
+        delta_tensor2=int8((abs(delta_x)<1e-10) & (abs(delta_y)<1e-10)); %-q_a-b_a+q_b+b_b-q_g-b_g+q_d+b_d, index: q_a,q_b,q_g,q_d,b_a,b_b,b_g,b_d
+        params.delta_tensor2=tensor(delta_tensor2,[Nq,Nq,Nq,Nq,Nb,Nb,Nb,Nb]);
         alpha=0.00729735; % eV*nm
 
         [q_g_x,q_d_x,b_g_x,b_d_x]=ndgrid(params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
