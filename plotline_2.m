@@ -10,7 +10,7 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
     mu_c_index=find(energyall==mu_c,1);
     [mu_v_k_index,mu_v_l_index]=ind2sub(size(energyall),mu_v_index);
     [mu_c_k_index,mu_c_l_index]=ind2sub(size(energyall),mu_c_index);
-    gap_str=sprintf('\nv:%d,%d\nc:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
+    gap_str=sprintf('\nv:%d,%d c:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
     
     gap=mu_c-mu_v;
     tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
@@ -21,7 +21,7 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
 
     if ismember('c',output)
         [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params);
-        chern_str=sprintf('\n+K:{%.4f}\n-K:{%.4f}',chern_p,chern_m);
+        chern_str=sprintf('\n+K:{%.4f} -K:{%.4f}',chern_p,chern_m);
     else
         chern_str='';
     end

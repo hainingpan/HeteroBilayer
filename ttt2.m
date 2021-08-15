@@ -33,8 +33,6 @@ preserve_size=xsize(k);
 x_mat=reshape(x.data,[prod(preserve_size),prod(xsize(remdims_x))]);
 y_mat=reshape(y.data,[prod(preserve_size),prod(ysize(remdims_y))]);
 
-% ind_x=find(ismember(remdims_x,i));
-% ind_y=find(ismember(remdims_y,j));
 ind_x=arrayfun(@(xx) find(remdims_x==xx) ,i);
 ind_y=arrayfun(@(xx) find(remdims_y==xx) ,j);
 tenprodsize=[xsize(setdiff(remdims_x,i)),ysize(setdiff(remdims_y,j))];
@@ -67,9 +65,10 @@ for i=1:prod(preserve_size)
     end
     z(i,:)=z_tensor(:);
 end
+% clear x_mat y_mat x_mat x_reshape y_reshape x y
+
 if length([preserve_size,tenprodsize])==1 %the final result is simply a vector 
     z_final=z;
 else
-    % z_final=reshape(z,[preserve_size,tenprodsize]);
     z_final=tensor(z,[preserve_size,tenprodsize]);
 end

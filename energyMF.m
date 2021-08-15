@@ -79,6 +79,7 @@ else
     H2=H2.data;
 end
 H=T+H1-H2;
+clear V1_ave V2_ave  delta hartree
 
 herr=max(sum(abs(H-conj(permute(H,[2,1,3]))),[1,2]));
 assert(herr<1e-12,sprintf("hermitian error: %e\n",herr));

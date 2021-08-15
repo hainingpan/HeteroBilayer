@@ -22,7 +22,7 @@ function params=mainTMD(varargin)
     addParameter(p,'epsilon',1); % gate to sample distance
     addParameter(p,'tsymm',0); % T-symm is enforced 
     addParameter(p,'shift',0); % shift to Kb
-    addParameter(p,'SDW',10e-3); % SDW
+    addParameter(p,'SDW',20e-3); % SDW
     
     parse(p,varargin{:});
     params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm,'shift',p.Results.shift,'SDW',p.Results.SDW);
@@ -270,8 +270,8 @@ function params=mainTMD(varargin)
         params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k=params.k_index*[params.bm1;params.bm2];
 
-        [ux,uy]=ndgrid(1:21,1:21);
-        params.k_dense_index=[(ux(:)-1)/(21),(uy(:)-1)/(21)];
+        [ux,uy]=ndgrid(1:2*params.n,1:2*params.n);
+        params.k_dense_index=[(ux(:)-1)/(2*params.n),(uy(:)-1)/(2*params.n)];
         params.k_dense=params.k_dense_index*[params.bm1;params.bm2];
 
         [ux,uy]=ndgrid(0:params.n,0:params.n);
@@ -326,41 +326,21 @@ function params=mainTMD(varargin)
 
         [q_g_x,q_d_x,b_g_x,b_d_x]=ndgrid(params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
         [q_g_y,q_d_y,b_g_y,b_d_y]=ndgrid(params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
-        q_abs=sqrt((b_g_x+q_g_x-b_d_x-q_d_x).^2+(b_g_y+q_g_y-b_d_y-q_d_y).^2);
-        qd=q_abs*params.d;
+        qd=params.d*sqrt((b_g_x+q_g_x-b_d_x-q_d_x).^2+(b_g_y+q_g_y-b_d_y-q_d_y).^2);
         params.V1=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
         assert(sum(isnan(params.V1(:)))==0,'V1 has NaN');
         params.V1=tensor(params.V1,[Nq,Nq,Nb,Nb]);
         Nk=size(params.k,1);
         [k_a_x,k_b_x,q_a_x,q_d_x,b_a_x,b_d_x]=ndgrid(params.k(:,1),params.k(:,1),params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
+        k_x=k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x;
+        clear k_a_x b_d_x q_d_x k_b_x b_a_x q_a_x 
         [k_a_y,k_b_y,q_a_y,q_d_y,b_a_y,b_d_y]=ndgrid(params.k(:,2),params.k(:,2),params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
-        q_abs=sqrt((k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x).^2+(k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y).^2);
-        qd=q_abs*params.d;
+        k_y=k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y;
+        clear k_a_y b_d_y q_d_y k_b_y b_a_y q_a_y
+        qd=params.d*sqrt(k_x.^2+k_y.^2);
+        clear k_x k_y
         params.V2=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
+        clear qd;
         assert(sum(isnan(params.V2(:)))==0,'V2 has NaN');
         params.V2=tensor(params.V2,[Nk,Nk,Nq,Nq,Nb,Nb]);
-
-        % qindex=[params.bm1;params.bm2]/[params.bM1;params.bM2];
-
-        % Qlistmat=params.q;
-        % Qshift1=mod(Qlistmat+qindex(1,:),1);
-        % Qshift2=mod(Qlistmat+qindex(2,:),1);
-
-        % Qshift1=mod(Qshift1,1);
-        % Qshift2=mod(Qshift2,1);
-
-        % perm1=zeros(size(Qshift1,1));
-        % for i=1:size(Qshift1,1)
-        %     j=find(abs(sum(abs(Qlistmat(i,:)-Qshift1).^2,2))<1e-5);
-        %     perm1(i,j)=1;
-        % end
-
-        % perm2=zeros(size(Qshift2,1));
-        % for i=1:size(Qshift2,1)
-        %     j=find(abs(sum(abs(Qlistmat(i,:)-Qshift2).^2,2))<1e-5);
-        %     perm2(i,j)=1;
-        % end 
-
-        % params.perm1=perm1;
-        % params.perm2=perm2;
     end

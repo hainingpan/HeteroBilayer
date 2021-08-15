@@ -25,12 +25,16 @@ b_mat=eye(Nb);
 
 alpha=0.00729735; % eV*nm
 [k_a_x,k_b_x,q_a_x,q_d_x,b_a_x,b_d_x]=ndgrid(params.k(:,1),k_beta_set(:,1),params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1));
+k_x=k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x;
+clear k_a_x b_d_x q_d_x k_b_x b_a_x q_a_x 
 [k_a_y,k_b_y,q_a_y,q_d_y,b_a_y,b_d_y]=ndgrid(params.k(:,2),k_beta_set(:,2),params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2));
-q_abs=sqrt((k_a_x+b_d_x+q_d_x-k_b_x-b_a_x-q_a_x).^2+(k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y).^2);
-qd=q_abs*params.d;
+k_y=k_a_y+b_d_y+q_d_y-k_b_y-b_a_y-q_a_y;
+clear k_a_y b_d_y q_d_y k_b_y b_a_y q_a_y
+qd=params.d*sqrt(k_x.^2+k_y.^2);
+clear k_x k_y
 V2=alpha*2*pi*tanh(qd+1e-18)./(qd+1e-18)*params.d;
+clear qd;
 V2=tensor(V2,[Nk0,Nk,Nq,Nq,Nb,Nb]);
-
 Delta_b_p=(params.Delta_b_p);
 Delta_t_p=(params.Delta_t_p);
 Delta_T_p=(params.Delta_T_p);
@@ -87,6 +91,7 @@ else
     H2=H2.data;
 end
 H=T+H1-H2;
+% clear V1_ave V2_ave  delta hartree
 
 herr=max(sum(abs(H-conj(permute(H,[2,1,3]))),[1,2]));
 assert(herr<1e-12,sprintf("hermitian error: %e\n",herr));
