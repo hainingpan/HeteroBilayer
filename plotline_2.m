@@ -1,6 +1,5 @@
-function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
 
-    Nk=size(params.k,1);
     Nai=size(params.ailist,1);  % The expansion of super cell
     if ismember('g',output)
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'dense',epoch,params);
@@ -9,16 +8,18 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
         else
             energyall_sort=sort(energyall_p(:));
         end
+        Nk=size(params.k_dense,1);
     else
+        Nk=size(params.k,1);
         energyall_sort=sort(energyall(:));
     end
     mu_v=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
     mu_c=energyall_sort(1+Nk*Nai*params.nu(1)/(params.nu(2)));
-    mu_v_index=find(energyall==mu_v,1);
-    mu_c_index=find(energyall==mu_c,1);
-    [mu_v_k_index,mu_v_l_index]=ind2sub(size(energyall),mu_v_index);
-    [mu_c_k_index,mu_c_l_index]=ind2sub(size(energyall),mu_c_index);
-    gap_str=sprintf('\nv:%d,%d c:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
+    % mu_v_index=find(energyall==mu_v,1);
+    % mu_c_index=find(energyall==mu_c,1);
+    % [mu_v_k_index,mu_v_l_index]=ind2sub(size(energyall),mu_v_index);
+    % [mu_c_k_index,mu_c_l_index]=ind2sub(size(energyall),mu_c_index);
+    % gap_str=sprintf('\nv:%d,%d c:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
     gap=mu_c-mu_v;
     tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
 
@@ -27,6 +28,8 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
         [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params);
         chern_str=sprintf('\n+K:{%.4f} -K:{%.4f}',chern_p,chern_m);
     else
+        chern_p=nan;
+        chern_m=nan;
         chern_str='';
     end
     
@@ -36,7 +39,7 @@ function [gap,tot,fig_band,fig_spin]=plotline_2(energyall,ave1,ave2,V1_ave_delta
         fig_band=figure;
         energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
         epoch_str=sprintf('\nepoch=%d',epoch);
-        title(strcat(energy_str,chern_str,gap_str,epoch_str));
+        title(strcat(energy_str,chern_str,epoch_str));
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
         segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
