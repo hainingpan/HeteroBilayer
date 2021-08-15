@@ -2,27 +2,24 @@ function z_final=ttt2(x,y,i,j,k,l)
 %tensor product preserving certain index k,l, sum over i,j
 %output index: first # of k follows the order of x, then goes the unsummed
 %indices from x to y
-if isa(x,'double') || isa(x,'int8')
+if ~isa(x,'tensor')
     x=tensor(x);
 end
 
-if isa(y,'double') || isa(y,'int8')
+if ~isa(y,'tensor')
     y=tensor(y);
 end
 
-if ~isempty(i) & ~isempty(j)
-    if x.size(i)~=y.size(j)
-        error('Must tensor product along the same dimensions');
-    end
+if ~isempty(i) && ~isempty(j)
+    assert(isequal(x.size(i),y.size(j)),sprintf('Must tensor product along the same dimensions #1 (%d)!= #2 (%d)',x.size(i),y.size(j)))
 else
-    if ~(isempty(i) & isempty(j))
-        error('Must tensor product along the same dimensions');
-    end
+    assert(isempty(i) && isempty(j),sprintf('Must both be empty'))
 end
 
-if x.size(k)~=y.size(l)
-    error('Must perserve along the same dimensions');
-end
+assert(isempty(intersect(i, k)),sprintf('dim of #1 has overlap (%d,$d)',i,k));
+assert(isempty(intersect(j, l)),sprintf('dim of #2 has overlap (%d,$d)',j,l));
+assert(isequal(x.size(k),y.size(l)),sprintf('Must perserve along the same dimensions'));
+
 remdims_x = setdiff(1:ndims(x),k);
 remdims_y = setdiff(1:ndims(y),l);
 xsize=x.size;
@@ -66,7 +63,7 @@ for i=1:prod(preserve_size)
         z_tensor=ttv(tensor(x_reshape),y_reshape',ind_x);
     end
     if length(remdims_x)~=1 & length(remdims_y)~=1
-        z_tensor=ttt(tensor(x_reshape),tensor(y_reshape),ind_x,ind_y);
+        z_tensor=ttt((x_reshape),(y_reshape),ind_x,ind_y);
     end
     z(i,:)=z_tensor(:);
 end

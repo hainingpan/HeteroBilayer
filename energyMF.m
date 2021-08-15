@@ -65,7 +65,7 @@ else
     H1=repmat(H1,[1,1,Nk])/(A*params.epsilon);
 end
 
-if isa(ave1,'double') && ave2==0
+if isa(ave2,'double') && ave2==0
     V2_ave_delta=0;
     H2=0;
 else
