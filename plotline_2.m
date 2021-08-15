@@ -3,7 +3,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
     Nai=size(params.ailist,1);  % The expansion of super cell
     if ismember('g',output)
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'dense',epoch,params);
-        if numel(energyall_m)>1
+        if prod(size(energyall_m))>1
             energyall_sort=sort([energyall_p(:);energyall_m(:)]);
         else
             energyall_sort=sort(energyall_p(:));
@@ -21,7 +21,12 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
     % [mu_c_k_index,mu_c_l_index]=ind2sub(size(energyall),mu_c_index);
     % gap_str=sprintf('\nv:%d,%d c:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
     gap=mu_c-mu_v;
-    tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
+    % tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
+    if prod(size(V1_ave_delta))>1 && prod(size(V2_ave_delta))>1
+        tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1,ave2,epoch,params);
+    else
+        tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
+    end
 
     %% Chern number
     if ismember('c',output)

@@ -8,11 +8,12 @@ function sweep_vz(nu,Nmax,w,Nk,ep,vz_t_list)
     ave1=0;
     ave2=0;
     epoch=0;
-
+    
+    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t_list(1),'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
     for vz_t_index=1:length(vz_t_list)
         vz_t=vz_t_list(vz_t_index);
         fprintf("vz_t=%.1f\n",vz_t);
-        [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(nu,Nmax,w,Nk,vz_t,ep,ave1,ave2,epoch);
+        [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(vz_t,ave1,ave2,epoch,params);
 
         chern_p_list(vz_t_index)=chern_p;
         chern_m_list(vz_t_index)=chern_m;
@@ -22,13 +23,13 @@ function sweep_vz(nu,Nmax,w,Nk,ep,vz_t_list)
         epoch_list(vz_t_index)=epoch;
     end
 
-    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Nk_%d.mat',params.nu(1),params.nu(2),epsilon,w,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list')
+    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Nk_%d.mat',nu(1),nu(2),ep,w,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list')
+end
 
 
 
-
-function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(nu,Nmax,w,Nk,vz_t,ep,ave1,ave2,epoch)
-    params=mainTMD('SDW',20e-3,'Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t,'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
+function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(vz_t,ave1,ave2,epoch,params)
+    params.Vz_t=vz_t*1e-3;
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,epoch,params);
     [ave1_n,ave2_n,occ]=average(energyall,wfall,epoch,params); 
     
@@ -56,10 +57,9 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(nu,Nmax,w,Nk,v
         end
         epoch=epoch+1;
     end
-    fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,Nk,vz_t,ep);
+    fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,params.n,params.Vz_t*1000,params.epsilon);
     [~,~,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fsg',params.chern),params);
     savefig(fig_band,strcat(fn,'_band.fig'));
     savefig(fig_spin,strcat(fn,'_spin.fig'));
-    % save(strcat(fn,'.mat'),'gap_list','tot_list','i','chern_p','chern_m');
-    
+end
     

@@ -1,3 +1,4 @@
-function y = memUsed
+function memUsed
 usr = memory;
-y = usr.MemUsedMATLAB/1e6;
+fprintf("%.1f MB\n",usr.MemUsedMATLAB/1e6)
+% y = usr.MemUsedMATLAB/1e6;
