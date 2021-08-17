@@ -265,9 +265,9 @@ function params=mainTMD(varargin)
         Nb=size(params.b,1);
 
         [ux,uy]=ndgrid(1:params.n,1:params.n);
-        % params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
+        params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
         % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
-        params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+        % params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k=params.k_index*[params.bm1;params.bm2];
 
         [ux,uy]=ndgrid(1:2*params.n,1:2*params.n);

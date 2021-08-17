@@ -14,11 +14,12 @@ function iter_save(nu,Nmax,w,Nk,vz_t,ep)
         [gap,tot]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,'',params);
         gap_list(end+1)=gap;
         tot_list(end+1)=tot;
-        fprintf("%d: Gap=%e (meV), E=%e (meV)\n",i,gap,tot);
+        pct_change=((tot_list(end)-tot_list(end-1))/tot_list(end-1));
+        fprintf("%d: Gap=%.10f (meV), E=%.10f (meV), change=%e\n",i,gap*1e3,tot*1e3,pct_change);
         ave1=ave1_n;
         ave2=ave2_n;
         drawnow;
-        if abs((tot_list(end)-tot_list(end-1))/tot_list(end-1))<1e-7
+        if abs(pct_change)<1e-7
             break;
         end
     end

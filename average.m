@@ -40,9 +40,12 @@ function [ave1,ave2,occ]=average(energyall,wfall,epoch,params)
 
     ave2=ttt2(d_conj,occ_d,[2],[2],[1],[1]); %k_a,q_d,b_d,l_a,t_a,q_g,b_g,l_b,t_b
     if params.tsymm==1
+        ave2=ave2.data;
         ave2_2=conj(ave2(end:-1:1,end:-1:1,end:-1:1,:,end:-1:1,end:-1:1,end:-1:1,:,end:-1:1));
-        ave2=(ave2+ave2_2)/2;
-        % ave2_2=conj(ave2(end:-1:1,end:-1:1,end:-1:1,:,end:-1:1,end:-1:1,end:-1:1,:,end:-1:1));
-        % ave2_err=max(ave2-ave2_2,[],'all');
+        ave2=(ave2+ave2_2)/2;        
+        ave2_2=conj(ave2(end:-1:1,end:-1:1,end:-1:1,:,end:-1:1,end:-1:1,end:-1:1,:,end:-1:1));    
+        ave2_err=max(abs(ave2-ave2_2),[],'all');
+        assert(ave2_err==0,'T-symm not passed');
+        ave2=tensor(ave2,[Nk,Nq,Nb,2,2,Nq,Nb,2,2]);
     end
     occ=double(occ);
