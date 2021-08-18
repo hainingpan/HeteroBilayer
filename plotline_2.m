@@ -70,7 +70,11 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
         xticks(klist([1,40,40+40-1,40+40-1+80-1]))
         xticklabels({'\kappa_t','m','\kappa_b','\gamma'});
         xlim([klist(1),klist(40+40-1+80-1)])
-        ylim([1000*min(min(energyall_p(:,1)),min(energyall_m(:,1)))-1,1000*max(energyall_p(:,4*Nai))])
+        if prod(size(energyall_m))>1
+            ylim([1000*min(min(energyall_p(:,1)),min(energyall_m(:,1)))-1,1000*max(energyall_p(:,4*Nai))])
+        else
+            ylim([1000*min(energyall_p(:,1))-1,1000*max(energyall_p(:,4*Nai))])
+        end
         xlabel('|k_m|')
         ylabel('E (meV)')
         drawnow;
