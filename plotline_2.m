@@ -48,8 +48,9 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
         segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
+        % segment=sqrt(diff(params.k_line_C3(:,1)).^2+diff(params.k_line_C3(:,2)).^2);
         klist=[0;cumsum(segment)];
-        for i=1:20
+        for i=1:min(20,size(energyall_p,2))
             scatter(klist,1e3*energyall_p(:,i),5,'r','filled');
             if energyall_m~=0
                 scatter(klist,1e3*energyall_m(:,i),5,'b','filled');
@@ -57,13 +58,19 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
         end
         yline(1000*mu_v,'color','k','LineStyle','--');
         yline(1000*mu_c,'color','k','LineStyle','--');
+        % xline(klist(40),'color','k','LineStyle','--','HandleVisibility','off');
+        % xline(klist(40+40-1),'color','k','LineStyle','--','HandleVisibility','off');
+        % xline(klist(40+40-1+40-1),'color','k','LineStyle','--','HandleVisibility','off');
+        % xticks(klist([1,40,40+40-1,40+40-1+40-1]))
+        % xticklabels({'\kappa_t_0','\kappa_t_1','\kappa_t_2','\kappa_t_0'});
+        % xlim([klist(1),klist(40+40-1+40-1)])
         xline(klist(40),'color','k','LineStyle','--','HandleVisibility','off');
         xline(klist(40+40-1),'color','k','LineStyle','--','HandleVisibility','off');
         xline(klist(40+40-1+80-1),'color','k','LineStyle','--','HandleVisibility','off');
         xticks(klist([1,40,40+40-1,40+40-1+80-1]))
         xticklabels({'\kappa_t','m','\kappa_b','\gamma'});
         xlim([klist(1),klist(40+40-1+80-1)])
-        ylim([1000*min(energyall_p(:,1))-1,1000*max(energyall_p(:,4*Nai))])
+        ylim([1000*min(min(energyall_p(:,1)),min(energyall_m(:,1)))-1,1000*max(energyall_p(:,4*Nai))])
         xlabel('|k_m|')
         ylabel('E (meV)')
         drawnow;

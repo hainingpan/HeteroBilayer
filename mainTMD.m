@@ -210,9 +210,23 @@ function params=mainTMD(varargin)
     m_kb_y=linspace(m(2),params.kb(2),40);
     kb_gamma_x=linspace(params.kb(1),gamma(1),80);
     kb_gamma_y=linspace(params.kb(2),gamma(2),80);
-    k_line_x=[kt_m_x,m_kb_x,kb_gamma_x];
-    k_line_y=[kt_m_y,m_kb_y,kb_gamma_y];
+    k_line_x=[kt_m_x,m_kb_x(2:end),kb_gamma_x(2:end)];
+    k_line_y=[kt_m_y,m_kb_y(2:end),kb_gamma_y(2:end)];
     params.k_line=[k_line_x(:),k_line_y(:)];
+
+    kt0=params.kb;
+    kt1=kt0*rotate(pi*2/3);
+    kt2=kt0*rotate(-pi*2/3);
+    kt0_kt1_x=linspace(kt0(1),kt1(1),40);
+    kt0_kt1_y=linspace(kt0(2),kt1(2),40);
+    kt1_kt2_x=linspace(kt1(1),kt2(1),40);
+    kt1_kt2_y=linspace(kt1(2),kt2(2),40);
+    kt2_kt0_x=linspace(kt2(1),kt0(1),40);
+    kt2_kt0_y=linspace(kt2(2),kt0(2),40);
+    k_line_C3_x=[kt0_kt1_x,kt1_kt2_x(2:end),kt2_kt0_x(2:end)];
+    k_line_C3_y=[kt0_kt1_y,kt1_kt2_y(2:end),kt2_kt0_y(2:end)];
+    params.k_line_C3=[k_line_C3_x(:),k_line_C3_y(:)];
+
     
     if params.nu~=0
         if params.auto_generate_q==1
@@ -268,6 +282,7 @@ function params=mainTMD(varargin)
         params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
         % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
         % params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
+
         params.k=params.k_index*[params.bm1;params.bm2];
 
         [ux,uy]=ndgrid(1:2*params.n,1:2*params.n);

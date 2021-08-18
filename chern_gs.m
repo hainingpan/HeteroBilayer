@@ -1,5 +1,4 @@
 function [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params)
-% ignore q for now. ignore nonabelian wilson loop
     Nai=size(params.ailist,1);  % The expansion of super cell
 
     [~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc',epoch,params);
