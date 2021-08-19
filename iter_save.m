@@ -7,7 +7,7 @@ function iter_save(nu,Nmax,w,Nk,vz_t,ep)
     
     gap_list=[gap];
     tot_list=[tot];
-    fprintf("%d: Gap=%e (meV), E=%e (meV)\n",0,gap,tot);
+    fprintf("%d: Gap=%.10f (meV), E=%.10f (meV)\n",0,gap*1e3,tot*1e3);
     for i=1:500
         [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,i,params);
         [ave1_n,ave2_n,occ]=average(energyall,wfall,i,params);       
