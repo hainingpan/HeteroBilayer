@@ -8,7 +8,8 @@ function re=S(h1,h2,tau1,tau2,params)
             sum=sum+iseq(h1,-params.Sq_index(i,1)*tau1).*iseq(h2,-params.Sq_index(i,2)*tau1);
         end
     else
-        sum=0*h1;
+        % sum=0*h1;
+        sum=tau1*params.sz*eye(size(h1));
     end
     re=params.SDW*sum;
 end

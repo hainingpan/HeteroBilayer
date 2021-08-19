@@ -56,6 +56,7 @@ function params=mainTMD(varargin)
     params.auto_generate_q=1;
     params.span='b';
     params.chern='c';
+    params.sz=0; %Canted AF
 
     % for single-particle
     if params.nu==0  
@@ -143,6 +144,7 @@ function params=mainTMD(varargin)
         Q=4*pi/(3*params.aM)*[1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
+        params.sz=20e-3;
         params.span='q';
         params.auto_generate_q=0;
     end
@@ -163,6 +165,7 @@ function params=mainTMD(varargin)
         % params.SDW=10e-3;   % the strength of SDW 
         Q=4*pi/(3*params.aM)*[-1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        params.sz=20e-3;
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
         params.span='q';
         params.auto_generate_q=0;
