@@ -2,7 +2,8 @@ function [s0,sx,sy,sz]=S_r(ave2,rmap_x,rmap_y,l,params)
     % l==1, bottom;
     % l==2, top;
     Nk=size(params.k,1);
-    % Nq=size(params.q,1);
+    Nq=size(params.q,1);
+    Nb=size(params.b,1);
     Nai=size(params.ailist,1);  % The expansion of super cell
     [q_a_x,q_b_x,b_a_x,b_b_x,r_x]=ndgrid(params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1),rmap_x);
     [q_a_y,q_b_y,b_a_y,b_b_y,r_y]=ndgrid(params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2),rmap_y);
@@ -10,6 +11,13 @@ function [s0,sx,sy,sz]=S_r(ave2,rmap_x,rmap_y,l,params)
     %ave2: k_a,q_d,b_d,l_a,t_a,q_g,b_g,l_b,t_b
     % size_ave2=size(ave2);
     % size_ave2([1,4,8])=[];
+    % ave2=permute(ave2,[1,6,7,8,9,2,3,4,5]);
+
+    % Take conjugate of ave because <c_k1^dag c_k2>=-<d_k2^dag d_k1>^*
+    ave2_mat=ave2.data; 
+    ave2=-reshape(conj(ave2_mat),[Nk,Nq,Nb,2,2,Nq,Nb,2,2]);
+    ave2=tensor(ave2);
+
     ave2=collapse(ave2(:,:,:,l,:,:,:,l,:),[1]);  % q_d,b_d,t_a,q_g,b_g,t_b
     expm_ave2=ttt2(expm,ave2,[1,2,3,4],[1,4,2,5],[],[]); % r,t_a,t_b
     sigma0=eye(2);
