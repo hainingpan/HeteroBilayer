@@ -89,20 +89,35 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
         rsite=[sitesX_index(:),sitesY_index(:)]*[params.aM1;params.aM2];
         rmap_x=rmap(:,1);
         rmap_y=rmap(:,2);
-        [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,1,params);
-        fig_spin=figure;
-        hold on;
-        scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled')
-        quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)),(sy(:)));
-        title(sprintf('epoch=%d',epoch));
-        daspect([1,1,1]);
-        scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
-        xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
-        ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
-        xlabel('x/|a_M|')
-        ylabel('y/|a_M|')
-        cb=colorbar;
-        cb.Title.String='S_z';
+        fig_spin=figure('Position', [10 10 900 600]);
+        for l=1:2
+            [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,l,params);
+            subplot(2, 2, 2*l-1);
+            hold on;
+            scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled');
+            quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)/20),(sy(:)/20),'AutoScale','off');
+            title(sprintf('%s: epoch=%d',(l==1)*'b'+(l==2)*'t',epoch));
+            daspect([1,1,1]);
+            scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
+            xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
+            ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
+            xlabel('x/|a_M|')
+            ylabel('y/|a_M|')
+            cb=colorbar;
+            cb.Title.String='S_z';
+            subplot(2, 2, 2*l);
+            hold on;
+            scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,s0(:),'filled');
+            title(sprintf('%s: epoch=%d',(l==1)*'b'+(l==2)*'t',epoch));
+            daspect([1,1,1]);
+            xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
+            ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
+            xlabel('x/|a_M|')
+            ylabel('y/|a_M|')
+            cb=colorbar;
+            cb.Title.String='n';
+        end
+        
         drawnow
     else
         fig_spin=0;

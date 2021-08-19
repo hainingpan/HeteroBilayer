@@ -2,7 +2,7 @@ function [s0,sx,sy,sz]=S_r(ave2,rmap_x,rmap_y,l,params)
     % l==1, bottom;
     % l==2, top;
     Nk=size(params.k,1);
-    Nq=size(params.q,1);
+    % Nq=size(params.q,1);
     Nai=size(params.ailist,1);  % The expansion of super cell
     [q_a_x,q_b_x,b_a_x,b_b_x,r_x]=ndgrid(params.q(:,1),params.q(:,1),params.b(:,1),params.b(:,1),rmap_x);
     [q_a_y,q_b_y,b_a_y,b_b_y,r_y]=ndgrid(params.q(:,2),params.q(:,2),params.b(:,2),params.b(:,2),rmap_y);
