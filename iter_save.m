@@ -1,5 +1,5 @@
 function iter_save(nu,Nmax,w,Nk,vz_t,ep)
-    params=mainTMD('SDW',20e-3,'Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t,'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
+    params=mainTMD('d',10e-9*5.076e6,'SDW',10e-3,'Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t,'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
     [ave1,ave2,occ]=average(energyall,wfall,0,params); 
     
