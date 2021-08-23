@@ -31,7 +31,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
     %% Chern number
     if ismember('c',output)
         [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params);
-        chern_str=sprintf('\n+K:{%.4f} -K:{%.4f}',chern_p,chern_m);
+        chern_str=sprintf('\n(%d)+K:{%.4f} -K:{%.4f}',params.NL,chern_p,chern_m);
     else
         chern_p=nan;
         chern_m=nan;

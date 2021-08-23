@@ -56,7 +56,15 @@ function params=mainTMD(varargin)
     params.auto_generate_q=1;
     params.span='b';
     params.chern='c';
-    params.sz=0; %Canted AF
+    params.Sq_index=[];
+    params.nq_index=[];
+    params.sxy=1; % magnitude of spin of xy component
+    params.sz_p=0; %Canted AF
+    params.sz_m=0; %Canted AF
+    params.s0=0;
+    params.phi_p=0; % sum cos(q.r+phi) for sigma_0 at +K
+    params.phi_m=0; % sum cos(q.r+phi) for sigma_0 at -K
+    params.NL=0;
 
     % for single-particle
     if params.nu==0  
@@ -65,7 +73,6 @@ function params=mainTMD(varargin)
         params.K=params.K_index*[params.bM1;params.bM2];
         ailist=[0,0];
         am_index=eye(2);
-        params.SDW=0;
     end
 
 
@@ -75,8 +82,9 @@ function params=mainTMD(varargin)
         am_index=eye(2);
         params.valley_polarized=1;
         params.fermisurface=0;
-        params.chern='c';
-        params.SDW=0;
+        
+        % params.SDW=0;
+        % params.sz=1;
     end
     % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
@@ -90,11 +98,12 @@ function params=mainTMD(varargin)
     if params.nu==[4,4]
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
-        params.valley_polarized=1;
-        params.fermisurface=0;
+        % params.valley_polarized=1;
+        % params.fermisurface=0;
         params.span='q';
         params.auto_generate_q=0;
-        params.SDW=0;
+        % params.SDW=0;
+        params.sz=1;
     end
 
     % FM_x without Wigner Crystal, spanned by b
@@ -174,10 +183,62 @@ function params=mainTMD(varargin)
     % QSHE
     if params.nu==[2,1]
         ailist=[0,0];
+        params.NL=1;
         am_index=eye(2);
         params.tsymm=1;
-        params.chern='c';
         params.SDW=0;
+    end
+
+    % Chern insulator
+    if params.nu==[4,2]
+        ailist=[0,0];
+        params.NL=1;
+        am_index=eye(2);
+        % params.tsymm=1;
+        params.nq_p_index=[[0,0]];
+        params.nq_m_index=[[0,0]];
+        params.s0=40e-3/params.SDW;
+        params.sz_p=40e-3/params.SDW;
+        params.sz_m=40e-3/params.SDW;
+    end
+
+    % Honeycomb FM
+    if params.nu==[2,3]
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        Q=4*pi/(3*params.aM)*[1,0];
+        q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        params.nq_p_index=q0/[params.bM1;params.bM2]; 
+        params.phi_p=pi;
+        params.nq_m_index=q0/[params.bM1;params.bM2]; 
+        params.phi_m=pi;
+        params.span='q';
+        params.auto_generate_q=0;
+
+        params.Sq_index=[];
+        params.s0=15e-3/params.SDW;
+        params.sz_p=1;
+        params.sz_m=1;
+    end
+    
+    % Honeycomb AFM
+    if params.nu==[-2,-3]
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        Q=4*pi/(3*params.aM)*[1,0];
+        q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
+        params.nq_p_index=q0/[params.bM1;params.bM2]; 
+        params.phi_p=-2*pi/3;
+        params.nq_m_index=q0/[params.bM1;params.bM2]; 
+        params.phi_m=2*pi/3;
+
+        params.span='q';
+        params.auto_generate_q=0;
+        params.Sq_index=[];
+        params.s0=15e-3/params.SDW;
+        params.sz_p=0;
+        params.sz_m=0;
+        params.NL=1;
     end
 
 
@@ -232,6 +293,10 @@ function params=mainTMD(varargin)
 
     
     if params.nu~=0
+        if params.NL==0
+            params.NL=size(params.ailist,1)*params.nu(1)/params.nu(2);
+        end
+
         if params.auto_generate_q==1
             %square [0,1]x[0,1] transformed to new shape
             new_pts=int8([[0,0];[1,0];[1,1];[0,1]]/bm_index);
