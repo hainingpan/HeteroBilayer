@@ -23,7 +23,7 @@ function sweep_vz(nu,Nmax,w,Nk,ep,Vb,vz_t_list)
         epoch_list(vz_t_index)=epoch;
     end
 
-    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Nk_%d.mat',nu(1),nu(2),ep,w,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list')
+    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Vb_%.1f_Nk_%d.mat',nu(1),nu(2),ep,w,Vb,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list')
 end
 
 
