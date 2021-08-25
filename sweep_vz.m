@@ -1,4 +1,4 @@
-function sweep_vz(nu,Nmax,w,Nk,ep,vz_t_list)
+function sweep_vz(nu,Nmax,w,Nk,ep,Vb,vz_t_list)
     % vz_t_list=-50:50;
     chern_p_list=vz_t_list;
     chern_m_list=vz_t_list;
@@ -9,7 +9,7 @@ function sweep_vz(nu,Nmax,w,Nk,ep,vz_t_list)
     ave2=0;
     epoch=0;
     
-    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz_t_list(1),'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
+    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b',-14,'vz_t',vz_t_list(1),'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
     for vz_t_index=1:length(vz_t_list)
         vz_t=vz_t_list(vz_t_index);
         fprintf("vz_t=%.1f\n",vz_t);

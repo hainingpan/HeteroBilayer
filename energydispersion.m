@@ -1,9 +1,9 @@
 figure;
 % +K
-w=20;
-psi_b=-14;
-V_b=15;
-vz_t=0;
+w=1.3;
+psi_b=14;
+V_b=4.3;
+vz_t=10;
 %  params_pK=mainTMD('valley',1,'vz_t',0);
 % params_pK=mainTMD('Nmax',2,'valley',1,'V_t',4.1,'psi_t',240,'V_b',4.1,'psi_b',-14,'vz_t',-30,'vz_b',0,'w',1.3);
 params_pK=mainTMD('Nmax',3,'valley',1,'V_t',0,'psi_t',240,'V_b',V_b,'psi_b',psi_b,'vz_t',vz_t,'vz_b',0,'w',w);
