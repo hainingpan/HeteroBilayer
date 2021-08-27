@@ -15,6 +15,7 @@ function sweep_vz(nu,Nmax,w,Nk,ep,Vb,vz_t_list)
         fprintf("vz_t=%.1f\n",vz_t);
         ave1=0;
         ave2=0;
+        epoch=0;
         [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(vz_t,ave1,ave2,epoch,params);
 
         chern_p_list(vz_t_index)=chern_p;
