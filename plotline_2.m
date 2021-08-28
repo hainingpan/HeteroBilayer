@@ -1,5 +1,5 @@
 function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
-
+    gap=nan;
     Nai=size(params.ailist,1);  % The expansion of super cell
     if ismember('g',output)
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'dense',epoch,params);
@@ -42,9 +42,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
     %% Band structure
     if ismember('f',output)
         fig_band=figure;
-        energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
-        epoch_str=sprintf('\nepoch=%d',epoch);
-        title(strcat(energy_str,chern_str,epoch_str));
+        
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
         segment=sqrt(diff(params.k_line(:,1)).^2+diff(params.k_line(:,2)).^2);
@@ -78,6 +76,19 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
         xlabel('|k_m|')
         ylabel('E (meV)')
         drawnow;
+        
+        % Though not sure whick k the gap is at, we can still compare the gap in line plot with the one using a mesh over entire BZ.
+        if ~isnan(gap)
+            energyall=sort([energyall_p(:);energyall_m(:)]);
+            energy_unocc=energyall(energyall>mu_v);
+            gap_line=energy_unocc(1)-mu_v;
+            if gap_line<gap
+                gap=gap_line;
+            end
+        end
+        energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
+        epoch_str=sprintf('\nepoch=%d',epoch);
+        title(strcat(energy_str,chern_str,epoch_str));
     else
         fig_band=0;
     end

@@ -1,4 +1,4 @@
-function sweep_vz(nu,Nmax,w,Nk,ep,Vb,vz_t_list)
+function sweep_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
     % vz_t_list=-50:50;
     chern_p_list=vz_t_list;
     chern_m_list=vz_t_list;
@@ -9,13 +9,13 @@ function sweep_vz(nu,Nmax,w,Nk,ep,Vb,vz_t_list)
     ave2=0;
     epoch=0;
     
-    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b',-14,'vz_t',vz_t_list(1),'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1);
+    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b',-14,'vz_t',vz_t_list(1),'vz_b',0,'w',w,'nu',nu,'n',Nk,'epsilon',ep,'shift',1,'d',d);
     for vz_t_index=1:length(vz_t_list)
         vz_t=vz_t_list(vz_t_index);
         fprintf("vz_t=%.1f\n",vz_t);
-        ave1=0;
-        ave2=0;
-        epoch=0;
+%         ave1=0;
+%         ave2=0;
+%         epoch=0;
         [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(vz_t,ave1,ave2,epoch,params);
 
         chern_p_list(vz_t_index)=chern_p;
@@ -26,7 +26,7 @@ function sweep_vz(nu,Nmax,w,Nk,ep,Vb,vz_t_list)
         epoch_list(vz_t_index)=epoch;
     end
 
-    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Vb%.1f_Nk%d.mat',nu(1),nu(2),ep,w,Vb,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list')
+    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Vb%.1f_d%d_Nk%d.mat',nu(1),nu(2),ep,w,Vb,d,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list')
 end
 
 
@@ -60,7 +60,7 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m]=iter(vz_t,ave1,ave2
         end
         epoch=epoch+1;
     end
-    fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Vb%.1f_Nk_%d_Vzt_%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,1000*params.V_b,params.n,params.Vz_t*1000,params.epsilon);
+    fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Vb%.1f_Nk_%d_Vzt_%.1f_d%d_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,1000*params.V_b,params.n,params.Vz_t*1000,params.d/(1e-9*5.076e6),params.epsilon);
     [~,~,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fsg',params.chern),params);
     savefig(fig_band,strcat(fn,'_band.fig'));
     savefig(fig_spin,strcat(fn,'_spin.fig'));

@@ -18,14 +18,14 @@ function params=mainTMD(varargin)
     addParameter(p,'nu',0);%filling factor number(#1) per site(#2); no spin degeneracy considered
     addParameter(p,'hole',1); %1: hole-like energy band ; -1: particle-like energy band
     addParameter(p,'n',15); % n*n grid in momentum space
-    addParameter(p,'d',5e-9*5.076e6); % gate to sample distance
+    addParameter(p,'d',5); % gate to sample distance (nm)
     addParameter(p,'epsilon',1); % gate to sample distance
     addParameter(p,'tsymm',0); % T-symm is enforced 
     addParameter(p,'shift',0); % shift to Kb
     addParameter(p,'SDW',20e-3); % SDW
     
     parse(p,varargin{:});
-    params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm,'shift',p.Results.shift,'SDW',p.Results.SDW);
+    params=struct('a_b',p.Results.a_b,'a_t',p.Results.a_t,'theta',p.Results.theta*pi/180,'m_b',p.Results.m_b*0.511e6,'m_t',p.Results.m_t*0.511e6,'V_b',p.Results.V_b*1e-3,'V_t',p.Results.V_t*1e-3,'psi_b',p.Results.psi_b/360*2*pi,'psi_t',p.Results.psi_t/360*2*pi,'w',p.Results.w*1e-3,'Vz_b',p.Results.Vz_b*1e-3,'Vz_t',p.Results.Vz_t*1e-3,'Nmax',p.Results.Nmax,'omega',p.Results.omega,'valley',p.Results.valley,'nu',p.Results.nu,'hole',p.Results.hole,'n',p.Results.n,'d',p.Results.d*1e-9*5.076e6,'epsilon',p.Results.epsilon,'tsymm',p.Results.tsymm,'shift',p.Results.shift,'SDW',p.Results.SDW);
 
     delta=(params.a_b-params.a_t)/params.a_t;
     params.aM=params.a_b/sqrt(delta^2+params.theta^2);
@@ -215,7 +215,7 @@ function params=mainTMD(varargin)
         params.phi_m=pi;
         params.span='q';
         params.auto_generate_q=0;
-
+        params.SDW=10e-3;
         params.Sq_index=[];
         params.s0=15e-3/params.SDW;
         params.sz_p=1;
@@ -235,6 +235,7 @@ function params=mainTMD(varargin)
 
         params.span='q';
         params.auto_generate_q=0;
+        params.SDW=10e-3;
         params.Sq_index=[];
         params.s0=10e-3/params.SDW;
         params.sz_p=0;
