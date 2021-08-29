@@ -66,6 +66,8 @@ function params=mainTMD(varargin)
     params.phi_p=0; % sum cos(q.r+phi) for sigma_0 at +K
     params.phi_m=0; % sum cos(q.r+phi) for sigma_0 at -K
     params.NL=0;
+    params.w0=params.w;
+    params.V_b0=params.V_b;
 
     % for single-particle
     if params.nu==0  
@@ -85,7 +87,6 @@ function params=mainTMD(varargin)
         params.fermisurface=0;
         
         params.SDW=0;
-        % params.sz=1;
     end
     % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
@@ -103,8 +104,26 @@ function params=mainTMD(varargin)
         params.fermisurface=0;
         params.span='q';
         params.auto_generate_q=0;
-        params.SDW=0;
-        % params.sz=1;
+        params.SDW=0e-3;
+        % params.sz_p=1;
+        % params.sz_m=1;
+        % params.w0=params.w*2;
+        % params.V_b0=params.V_b*5;
+    end
+
+    if params.nu==[8,8]
+        ailist=[[0,0];[1,0];[2,0]];
+        am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        % params.valley_polarized=1;
+        % params.fermisurface=0;
+        params.span='q';
+        params.auto_generate_q=0;
+        % params.SDW=0e-3;
+        params.Sq_index=[[0,0]];
+        params.sz_p=1;
+        params.sz_m=1;
+        % params.w0=params.w*2;
+        % params.V_b0=params.V_b*5;
     end
 
     % FM_x without Wigner Crystal, spanned by b
@@ -154,7 +173,6 @@ function params=mainTMD(varargin)
         Q=4*pi/(3*params.aM)*[1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
-        params.sz=0e-3;
         params.span='q';
         params.auto_generate_q=0;
     end
@@ -175,7 +193,6 @@ function params=mainTMD(varargin)
         % params.SDW=10e-3;   % the strength of SDW 
         Q=4*pi/(3*params.aM)*[-1,0];
         q0=[Q;Q*rotate(2*pi/3);Q*rotate(4*pi/3)];
-        params.sz=0e-3;
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
         params.span='q';
         params.auto_generate_q=0;
@@ -268,7 +285,7 @@ function params=mainTMD(varargin)
     params.Deltabmat=Deltal(h1matX-h1matY,h2matX-h2matY,1,params);
     params.Deltatmat=Deltal(h1matX-h1matY,h2matX-h2matY,-1,params);
     
-    valley0=params.valley;
+    valley_orig=params.valley;
     R=[[0,-1];[1,0]];
     params.ailist=ailist;
     bm_index=1/size(ailist,1)*R'*am_index*R;  %check oneNotes
@@ -384,12 +401,36 @@ function params=mainTMD(varargin)
         params.Delta_TT_p=DeltaTT(h1,h2,params);
         params.Delta_b_p=Deltal(h1,h2,1,params);
         params.Delta_t_p=Deltal(h1,h2,-1,params);
+
+        w_orig=params.w;
+        Vb_orig=params.V_b;
+        params.w=params.w0;
+        params.V_b=params.V_b0;
+        params.Delta_T_0_p=DeltaT(h1,h2,params);
+        params.Delta_TT_0_p=DeltaTT(h1,h2,params);
+        params.Delta_b_0_p=Deltal(h1,h2,1,params);
+        params.Delta_t_0_p=Deltal(h1,h2,-1,params);
+        params.w=w_orig;
+        params.V_b=Vb_orig;
+
         params.valley=-1;
         params.Delta_T_m=DeltaT(h1,h2,params);
         params.Delta_TT_m=DeltaTT(h1,h2,params);
         params.Delta_b_m=Deltal(h1,h2,1,params);
         params.Delta_t_m=Deltal(h1,h2,-1,params);
-        params.valley=valley0;
+
+        w_orig=params.w;
+        Vb_orig=params.V_b;
+        params.w=params.w0;
+        params.V_b=params.V_b0;
+        params.Delta_T_0_m=DeltaT(h1,h2,params);
+        params.Delta_TT_0_m=DeltaTT(h1,h2,params);
+        params.Delta_b_0_m=Deltal(h1,h2,1,params);
+        params.Delta_t_0_m=Deltal(h1,h2,-1,params);
+        params.w=w_orig;
+        params.V_b=Vb_orig;
+
+        params.valley=valley_orig;
 
         if params.SDW~=0
             [q_a_x,b_a_x,q_b_x,b_b_x]=ndgrid(params.q_index(:,1),params.b_index(:,1),params.q_index(:,1),params.b_index(:,1));

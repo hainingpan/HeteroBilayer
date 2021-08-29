@@ -6,8 +6,6 @@ Nq=size(q_set,1);
 Nai=size(params.ailist,1);  % The expansion of super cell
 k_beta_set=params.k;
 Nk=size(k_beta_set,1);
-% b_index=params.b_index;
-% q_index=params.q_index;
 
 Vz_b=params.Vz_b;
 Vz_t=params.Vz_t;
@@ -17,17 +15,26 @@ b_mat=eye(Nb);
 energyall=zeros(Nk,Nb*Nq*2*2);
 valley_index=zeros(Nk,Nb*Nq*2*2);
 wfall=zeros(Nk,Nb*Nq*2*2,Nb*Nq*2*2);
-% T=zeros(Nb*Nq*2*2,Nb*Nq*2*2,Nk);
 
-
-Delta_b_p=(params.Delta_b_p);
-Delta_t_p=(params.Delta_t_p);
-Delta_T_p=(params.Delta_T_p);
-Delta_TT_p=(params.Delta_TT_p);
-Delta_b_m=(params.Delta_b_m);
-Delta_t_m=(params.Delta_t_m);
-Delta_T_m=(params.Delta_T_m);
-Delta_TT_m=(params.Delta_TT_m);
+if epoch>0
+    Delta_b_p=(params.Delta_b_p);
+    Delta_t_p=(params.Delta_t_p);
+    Delta_T_p=(params.Delta_T_p);
+    Delta_TT_p=(params.Delta_TT_p);
+    Delta_b_m=(params.Delta_b_m);
+    Delta_t_m=(params.Delta_t_m);
+    Delta_T_m=(params.Delta_T_m);
+    Delta_TT_m=(params.Delta_TT_m);
+else
+    Delta_b_p=(params.Delta_b_0_p);
+    Delta_t_p=(params.Delta_t_0_p);
+    Delta_T_p=(params.Delta_T_0_p);
+    Delta_TT_p=(params.Delta_TT_0_p);
+    Delta_b_m=(params.Delta_b_0_m);
+    Delta_t_m=(params.Delta_t_0_m);
+    Delta_T_m=(params.Delta_T_0_m);
+    Delta_TT_m=(params.Delta_TT_0_m);
+end
 
 Delta_p=[Delta_b_p,Delta_T_p;Delta_TT_p,Delta_t_p];
 Delta_m=[Delta_b_m,Delta_T_m;Delta_TT_m,Delta_t_m];

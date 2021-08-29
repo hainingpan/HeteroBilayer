@@ -1,4 +1,4 @@
-function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
     gap=nan;
     Nai=size(params.ailist,1);  % The expansion of super cell
     if ismember('g',output)
@@ -107,7 +107,18 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
             hold on;
             scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled');
             quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)/20),(sy(:)/20),'AutoScale','off');
-            title(sprintf('%s: epoch=%d',(l==1)*'b'+(l==2)*'t',epoch));
+            titlespin=sprintf('%s: epoch=%d\n',(l==1)*'b'+(l==2)*'t',epoch);
+            if Nai==3
+                ABC_list=[1,(size(rmap,1)-1)/3,(size(rmap,1)-1)/3*2];
+                titlespint='';
+                for i=ABC_list
+                    % site_label='A'-1+i;
+                    titlespint=strcat(titlespint,sprintf('\n(n,\\phi,\\theta)=(%.4f,%.4f,%.4f)',s0(i),atan2(sx(i),sy(i))*180/pi,atan2(sqrt(sx(i)^2+sy(i)^2),sz(i))*180/pi));
+                end
+            else Nai==1
+                titlespint=sprintf('A: (n,\\phi,\\theta)=(%.4f,%.4f,%.4f)',s0(1),atan2(sx(1),sy(1))*180/pi,atan2(sqrt(sx(1)^2+sy(1)^2),sz(1))*180/pi);
+            end
+            title(strcat(titlespin,titlespint));
             daspect([1,1,1]);
             scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
             xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
@@ -132,6 +143,12 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,a
         drawnow
     else
         fig_spin=0;
+        s0=nan;
+        sx=nan;
+        sy=nan;
+        sz=nan;
+        rmap_x=nan;
+        rmap_y=nan;
     end
     
 end

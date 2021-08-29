@@ -12,14 +12,25 @@ Vz_t=params.Vz_t;
 q_mat=eye(Nq);
 b_mat=eye(Nb);
 
-Delta_b_p=(params.Delta_b_p);
-Delta_t_p=(params.Delta_t_p);
-Delta_T_p=(params.Delta_T_p);
-Delta_TT_p=(params.Delta_TT_p);
-Delta_b_m=(params.Delta_b_m);
-Delta_t_m=(params.Delta_t_m);
-Delta_T_m=(params.Delta_T_m);
-Delta_TT_m=(params.Delta_TT_m);
+if epoch>0
+    Delta_b_p=(params.Delta_b_p);
+    Delta_t_p=(params.Delta_t_p);
+    Delta_T_p=(params.Delta_T_p);
+    Delta_TT_p=(params.Delta_TT_p);
+    Delta_b_m=(params.Delta_b_m);
+    Delta_t_m=(params.Delta_t_m);
+    Delta_T_m=(params.Delta_T_m);
+    Delta_TT_m=(params.Delta_TT_m);
+else
+    Delta_b_p=(params.Delta_b_0_p);
+    Delta_t_p=(params.Delta_t_0_p);
+    Delta_T_p=(params.Delta_T_0_p);
+    Delta_TT_p=(params.Delta_TT_0_p);
+    Delta_b_m=(params.Delta_b_0_m);
+    Delta_t_m=(params.Delta_t_0_m);
+    Delta_T_m=(params.Delta_T_0_m);
+    Delta_TT_m=(params.Delta_TT_0_m);
+end
 
 Delta_p=[Delta_b_p,Delta_T_p;Delta_TT_p,Delta_t_p];
 Delta_m=[Delta_b_m,Delta_T_m;Delta_TT_m,Delta_t_m];
