@@ -1,4 +1,4 @@
-function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_list,rmap_x,rmap_y]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
     gap=nan;
     Nai=size(params.ailist,1);  % The expansion of super cell
     if ismember('g',output)
@@ -101,8 +101,16 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y]=p
         rmap_x=rmap(:,1);
         rmap_y=rmap(:,2);
         fig_spin=figure('Position', [10 10 900 600]);
+        s0_list=zeros(size(rmap));
+        sx_list=zeros(size(rmap));
+        sy_list=zeros(size(rmap));
+        sz_list=zeros(size(rmap));
         for l=1:2
             [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,l,params);
+            s0_list(:,l)=s0;
+            sx_list(:,l)=sx;
+            sy_list(:,l)=sy;
+            sz_list(:,l)=sz;
             subplot(2, 2, 2*l-1);
             hold on;
             scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled');
