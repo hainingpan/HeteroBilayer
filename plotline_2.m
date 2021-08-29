@@ -115,7 +115,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y]=p
                     % site_label='A'-1+i;
                     titlespint=strcat(titlespint,sprintf('\n(n,\\phi,\\theta)=(%.4f,%.4f,%.4f)',s0(i),atan2(sx(i),sy(i))*180/pi,atan2(sqrt(sx(i)^2+sy(i)^2),sz(i))*180/pi));
                 end
-            else Nai==1
+            elseif Nai==1
                 titlespint=sprintf('A: (n,\\phi,\\theta)=(%.4f,%.4f,%.4f)',s0(1),atan2(sx(1),sy(1))*180/pi,atan2(sqrt(sx(1)^2+sy(1)^2),sz(1))*180/pi);
             end
             title(strcat(titlespin,titlespint));
