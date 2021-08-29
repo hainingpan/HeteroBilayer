@@ -39,7 +39,7 @@ function sweep_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
         rmap_y_list{vz_t_index}=rmap_y;
     end
 
-    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Vb%.1f_d%d_Nk%d.mat',nu(1),nu(2),ep,w,Vb,d,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list','s0_list','sx_list','sy_list','sz_list','rmap_x_list','rmap_y_list')
+    save(sprintf('phase_nu%d,%d_ep%d_w%.1f_Vb%.1f_d%.1f_Nk%d.mat',nu(1),nu(2),ep,w,Vb,d,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','vz_t_list','s0_list','sx_list','sy_list','sz_list','rmap_x_list','rmap_y_list')
 end
 
 
@@ -73,7 +73,7 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
         end
         epoch=epoch+1;
     end
-    fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Vb%.1f_Nk_%d_Vzt_%.1f_d%d_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,1000*params.V_b,params.n,params.Vz_t*1000,params.d/(1e-9*5.076e6),params.epsilon);
+    fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Vb%.1f_Nk_%d_Vzt_%.1f_d%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,1000*params.V_b,params.n,params.Vz_t*1000,params.d/(1e-9*5.076e6),params.epsilon);
     [~,~,fig_band,fig_spin,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fsg',params.chern),params);
     savefig(fig_band,strcat(fn,'_band.fig'));
     savefig(fig_spin,strcat(fn,'_spin.fig'));
