@@ -21,7 +21,7 @@ function params=mainTMD(varargin)
     addParameter(p,'d',5); % gate to sample distance (nm)
     addParameter(p,'epsilon',1); % gate to sample distance
     addParameter(p,'tsymm',0); % T-symm is enforced 
-    addParameter(p,'shift',0); % shift to Kb
+    addParameter(p,'shift',0); % 0: no shift; 1: shift to Kb; 2: shift both layer
     addParameter(p,'SDW',20e-3); % SDW
     
     parse(p,varargin{:});

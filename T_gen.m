@@ -15,31 +15,47 @@ for k_beta_index=1:Nk
     ky=k_beta_set(k_beta_index,2);
     [qx_set_grid,bx_set_grid]=ndgrid(q_set(:,1),b_set(:,1));
     [qy_set_grid,by_set_grid]=ndgrid(q_set(:,2),b_set(:,2));
-    if shift==1
-        k_b_p_x=kx+qx_set_grid(:)+bx_set_grid(:);
-        k_b_p_y=ky+qy_set_grid(:)+by_set_grid(:);
+    switch shift
+        case 0
+            k_b_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-kb(1);
+            k_b_p_y=ky+qy_set_grid(:)+by_set_grid(:)-kb(2);
+        
+            k_t_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-kt(1);
+            k_t_p_y=ky+qy_set_grid(:)+by_set_grid(:)-kt(2);
+        
+            k_b_m_x=-kx-qx_set_grid(:)-bx_set_grid(:)-kb(1);
+            k_b_m_y=-ky-qy_set_grid(:)-by_set_grid(:)-kb(2);
+        
+            k_t_m_x=-kx-qx_set_grid(:)-bx_set_grid(:)-kt(1);
+            k_t_m_y=-ky-qy_set_grid(:)-by_set_grid(:)-kt(2);
+        case 1
+            k_b_p_x=kx+qx_set_grid(:)+bx_set_grid(:);
+            k_b_p_y=ky+qy_set_grid(:)+by_set_grid(:);
 
-        k_b_m_x=kx+qx_set_grid(:)+bx_set_grid(:);
-        k_b_m_y=ky+qy_set_grid(:)+by_set_grid(:);
+            k_b_m_x=kx+qx_set_grid(:)+bx_set_grid(:);
+            k_b_m_y=ky+qy_set_grid(:)+by_set_grid(:);
 
-        k_t_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-(kt(1)-kb(1));
-        k_t_p_y=ky+qy_set_grid(:)+by_set_grid(:)-(kt(2)-kb(2));
+            k_t_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-(kt(1)-kb(1));
+            k_t_p_y=ky+qy_set_grid(:)+by_set_grid(:)-(kt(2)-kb(2));
 
-        k_t_m_x=kx+qx_set_grid(:)+bx_set_grid(:)+(kt(1)-kb(1));
-        k_t_m_y=ky+qy_set_grid(:)+by_set_grid(:)+(kt(2)-kb(2));
-    else
-        k_b_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-kb(1);
-        k_b_p_y=ky+qy_set_grid(:)+by_set_grid(:)-kb(2);
-    
-        k_t_p_x=kx+qx_set_grid(:)+bx_set_grid(:)-kt(1);
-        k_t_p_y=ky+qy_set_grid(:)+by_set_grid(:)-kt(2);
-    
-        k_b_m_x=-kx-qx_set_grid(:)-bx_set_grid(:)-kb(1);
-        k_b_m_y=-ky-qy_set_grid(:)-by_set_grid(:)-kb(2);
-    
-        k_t_m_x=-kx-qx_set_grid(:)-bx_set_grid(:)-kt(1);
-        k_t_m_y=-ky-qy_set_grid(:)-by_set_grid(:)-kt(2);
+            k_t_m_x=kx+qx_set_grid(:)+bx_set_grid(:)+(kt(1)-kb(1));
+            k_t_m_y=ky+qy_set_grid(:)+by_set_grid(:)+(kt(2)-kb(2));
+        case 2
+            k_b_p_x=kx+qx_set_grid(:)+bx_set_grid(:);
+            k_b_p_y=ky+qy_set_grid(:)+by_set_grid(:);
+
+            k_b_m_x=kx+qx_set_grid(:)+bx_set_grid(:);
+            k_b_m_y=ky+qy_set_grid(:)+by_set_grid(:);
+
+            k_t_p_x=kx+qx_set_grid(:)+bx_set_grid(:);
+            k_t_p_y=ky+qy_set_grid(:)+by_set_grid(:);
+
+            k_t_m_x=kx+qx_set_grid(:)+bx_set_grid(:);
+            k_t_m_y=ky+qy_set_grid(:)+by_set_grid(:);
+        otherwise
+            error('Unspecified shift %d',shift);
     end
+
     T_b_m=-1/(2*m_b)*diag(k_b_m_x.^2+k_b_m_y.^2);
     T_t_m=-1/(2*m_t)*diag(k_t_m_x.^2+k_t_m_y.^2);
     T_m=[T_b_m,0*T_b_m;0*T_b_m,T_t_m];
