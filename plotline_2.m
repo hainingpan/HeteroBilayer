@@ -78,14 +78,14 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         drawnow;
         
         % Though not sure whick k the gap is at, we can still compare the gap in line plot with the one using a mesh over entire BZ.
-        if ~isnan(gap)
-            energyall=sort([energyall_p(:);energyall_m(:)]);
-            energy_unocc=energyall(energyall>mu_v);
-            gap_line=energy_unocc(1)-mu_v;
-            if gap_line<gap
-                gap=gap_line;
-            end
-        end
+        % if ~isnan(gap)
+        %     energyall=sort([energyall_p(:);energyall_m(:)]);
+        %     energy_unocc=energyall(energyall>mu_v);
+        %     gap_line=energy_unocc(1)-mu_v;
+        %     if gap_line<gap
+        %         gap=gap_line;
+        %     end
+        % end
         energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
         epoch_str=sprintf('\nepoch=%d',epoch);
         title(strcat(energy_str,chern_str,epoch_str));

@@ -9,8 +9,8 @@ function re=DeltaTT(h1,h2,parameters)
         omega=conj(parameters.omega);
     end
     if parameters.shift==2
-        h1=h1-2/3*parameters.valley;
-        h2=h2-1/3*parameters.valley;
+        h1=h1+2/3*t; % the seemingly-wrong sign is because we need to revert it backwards to have a same convention as before
+        h2=h2+1/3*t;
     end
     re=w*(iseq(h1,0).*iseq(h2,0)...   %gamma point
         +conj(omega)*iseq(h1,1*t).*iseq(h2,0)...    %g2

@@ -10,8 +10,8 @@ function re=DeltaT(h1,h2,parameters)
     end
     if parameters.shift==2
         assert(parameters.span=='q','When shift both layer, BZ should be spanned by q')
-        h1=h1+2/3*parameters.valley;
-        h2=h2+1/3*parameters.valley;
+        h1=h1-2/3*t; % the seemingly-wrong sign is because we need to revert it backwards to have a same convention as before
+        h2=h2-1/3*t;
     end
     re=w*(iseq(h1,0).*iseq(h2,0)+...  %gamma point
         omega*iseq(h1,-1*t).*iseq(h2,0)...  %g2
