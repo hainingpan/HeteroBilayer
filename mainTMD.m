@@ -85,7 +85,7 @@ function params=mainTMD(varargin)
         am_index=eye(2);
         params.valley_polarized=1;
         params.fermisurface=0;
-        
+        params.shift=1;
         params.SDW=0;
     end
     % QAHE(FM_z) WC, cascaded
@@ -100,6 +100,7 @@ function params=mainTMD(varargin)
     if params.nu==[4,4]
         ailist=[[0,0];[1,0];[2,0]];
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
+        params.shift=2;
         params.valley_polarized=1;
         params.fermisurface=0;
         params.span='q';
@@ -130,6 +131,7 @@ function params=mainTMD(varargin)
     if params.nu==[-1,-1]
         ailist=[0,0];
         am_index=eye(2);
+        params.shift=1;
         % params.SDW=10e-3;
         q0_index=[0,0];
         params.Sq_index=[q0_index];
@@ -150,6 +152,7 @@ function params=mainTMD(varargin)
         am_index=[[1,1];[2,-1]]; % am=am_index* [aM1;aM2]; am_index=[am1_index,am2_index];
         % params.SDW=10e-3;   % the strength of SDW 
         params.span='q';
+        params.shift=2;
         q0_index=[0,0];
         params.Sq_index=[q0_index];
         params.auto_generate_q=0;
@@ -175,6 +178,7 @@ function params=mainTMD(varargin)
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
         params.span='q';
         params.auto_generate_q=0;
+        params.shift=2;
     end
 
     %trivial Mott insulator, 120 AF, -1 chirality
@@ -196,6 +200,7 @@ function params=mainTMD(varargin)
         params.Sq_index=q0/[params.bM1;params.bM2]; % SDW S(r)*tau, S(r)=sum_{q} {cos(q*r);sin(q*r)}
         params.span='q';
         params.auto_generate_q=0;
+        params.shift=2;
     end
 
     % QSHE
@@ -205,6 +210,7 @@ function params=mainTMD(varargin)
         am_index=eye(2);
         params.tsymm=1;
         params.SDW=0;
+        params.shift=1;
     end
 
     % Chern insulator
@@ -237,6 +243,7 @@ function params=mainTMD(varargin)
         params.s0=15e-3/params.SDW;
         params.sz_p=1;
         params.sz_m=1;
+        params.shift=2;
     end
     
     % Honeycomb AFM
@@ -258,6 +265,7 @@ function params=mainTMD(varargin)
         params.sz_p=0;
         params.sz_m=0;
         params.NL=1;
+        params.shift=2;
     end
 
     % Metalic state 
@@ -270,6 +278,7 @@ function params=mainTMD(varargin)
         params.auto_generate_q=0;
         params.SDW=0;
         % params.sz=1;
+        params.shift=2;
     end
 
     % h1 bM1+ h2 bM2
