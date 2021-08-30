@@ -117,7 +117,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
             quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)/20),(sy(:)/20),'AutoScale','off');
             titlespin=sprintf('%s: epoch=%d\n',(l==1)*'b'+(l==2)*'t',epoch);
             if Nai==3
-                ABC_list=[1,(size(rmap,1)-1)/3,(size(rmap,1)-1)/3*2];
+                ABC_list=[1,(size(rmap,1)-1)/3+1,(size(rmap,1)-1)/3*2+1];
                 titlespint='';
                 for i=ABC_list
                     % site_label='A'-1+i;
