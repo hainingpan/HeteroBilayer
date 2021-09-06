@@ -7,6 +7,9 @@ Nai=size(params.ailist,1);  % The expansion of super cell
 if strcmp(tag,'bc')
     k_beta_set=params.k_bc;
 end
+if strcmp(tag,'bc_dense')
+    k_beta_set=params.k_bc_dense;
+end
 if strcmp(tag,'line')
     k_beta_set=params.k_line;
     % k_beta_set=params.k_line_C3;

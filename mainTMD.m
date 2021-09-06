@@ -44,6 +44,7 @@ function params=mainTMD(varargin)
 
     params.Kb=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
     params.Kt=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
+    params.dense_factor=2;
 
     if mod(params.n,3)~=0
         warning('n={%d} is not multiple of 3, which does not go through K point',params.n);
@@ -68,6 +69,7 @@ function params=mainTMD(varargin)
     params.NL=0;
     params.w0=params.w;
     params.V_b0=params.V_b;
+    params.sigma_xy=0;
 
     % for single-particle
     if params.nu==0  
@@ -87,6 +89,8 @@ function params=mainTMD(varargin)
         params.fermisurface=0;
         params.shift=1;
         params.SDW=0;
+        params.dense_factor=2;
+        params.sigma_xy=1;
     end
     % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
@@ -389,17 +393,23 @@ function params=mainTMD(varargin)
         params.k_index=[(2*ux(:)-params.n-1)/(2*params.n),(2*uy(:)-params.n-1)/(2*params.n)];
         % params.k_index=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
         % params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
-
         params.k=params.k_index*[params.bm1;params.bm2];
 
-        [ux,uy]=ndgrid(1:2*params.n,1:2*params.n);
-        params.k_dense_index=[(ux(:)-1)/(2*params.n),(uy(:)-1)/(2*params.n)];
+        [ux,uy]=ndgrid(1:params.dense_factor*params.n,1:params.dense_factor*params.n);
+        params.k_dense_index=[(ux(:)-1)/(params.dense_factor*params.n),(uy(:)-1)/(params.dense_factor*params.n)];
         params.k_dense=params.k_dense_index*[params.bm1;params.bm2];
 
         [ux,uy]=ndgrid(0:params.n,0:params.n);
         params.k_index_bc=[(2*ux(:)-params.n)/(2*params.n),(2*uy(:)-params.n)/(2*params.n)];
+        % params.k_index_bc=[(2*ux(:)-1)/(2*params.n),(2*uy(:)-1)/(2*params.n)];
         % params.k_index_bc=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k_bc=params.k_index_bc*[params.bm1;params.bm2];
+
+        if params.sigma_xy==1
+            [ux,uy]=ndgrid(0:params.dense_factor*params.n,0:params.dense_factor*params.n);
+            params.k_index_bc_dense=[(2*ux(:)-1)/(2*params.dense_factor*params.n),(2*uy(:)-1)/(2*params.dense_factor*params.n)];
+            params.k_bc_dense=params.k_index_bc_dense*[params.bm1;params.bm2];
+        end
 
         [q_a_x,b_a_x,q_b_x,b_b_x]=ndgrid(params.q_index(:,1),params.b_index(:,1),params.q_index(:,1),params.b_index(:,1));
         [q_a_y,b_a_y,q_b_y,b_b_y]=ndgrid(params.q_index(:,2),params.b_index(:,2),params.q_index(:,2),params.b_index(:,2));

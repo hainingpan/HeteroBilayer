@@ -1,8 +1,11 @@
-function [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params)
+function [chern_p,chern_m,bcmap_p,bcmap_m]=chern_gs(ave1,ave2,epoch,params)
     % NL=size(params.ailist,1)*params.nu(2)/params.nu(1);  % The expansion of super cell
     NL=params.NL;
-
-    [~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc',epoch,params);
+    if params.sigma_xy==0
+        [~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc',epoch,params);
+    else
+        [~,~,wfall_p_0,wfall_m_0]=energyMF_bc(ave1,ave2,'bc_dense',epoch,params);
+    end
     if wfall_m_0==0
         n=sqrt(size(wfall_p_0,1));
         l_index=1:NL;
@@ -34,13 +37,13 @@ function [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params)
         umap_p=permute(reshape(wfall_p,[n,n,NL,size(wfall_p,3)]),[3,4,1,2]);
         umap_m=permute(reshape(wfall_m,[n,n,NL,size(wfall_m,3)]),[3,4,1,2]);
 
-        nindex=1:n;
+        nindex=1:n-1;
         nindex_inc=mod(nindex,n)+1;
         u1_p=umap_p(:,:,nindex,nindex); %NL,NL,n,n,
         u2_p=umap_p(:,:,nindex_inc,nindex);
         u3_p=umap_p(:,:,nindex_inc,nindex_inc);
         u4_p=umap_p(:,:,nindex,nindex_inc);
-        bcmap_p=zeros(n,n);
+        bcmap_p=zeros(n-1,n-1);
         for i=nindex
             for j=nindex
                 U12=conj(u1_p(:,:,i,j))*u2_p(:,:,i,j).';
@@ -56,7 +59,7 @@ function [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params)
         u3_m=umap_m(:,:,nindex_inc,nindex_inc);
         u4_m=umap_m(:,:,nindex,nindex_inc);
 
-        bcmap_m=zeros(n,n);
+        bcmap_m=zeros(n-1,n-1);
         for i=nindex
             for j=nindex
                 U12=conj(u1_m(:,:,i,j))*u2_m(:,:,i,j).';

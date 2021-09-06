@@ -3,12 +3,12 @@
 % vz_list=linspace(-50,50,101);
 % w_list=linspace(0,30,61);
 
-vz_list=linspace(-50,0,31);
-w_list=linspace(0,20,21);
+vz_list=linspace(-50,0,101);
+w_list=linspace(0,20,81);
 topo_pK_map=zeros(length(vz_list),length(w_list));
 gap_indirect_map=zeros(length(vz_list),length(w_list));
 gap_direct_map=zeros(length(vz_list),length(w_list));
-Vb=5;
+Vb=10;
 for vz_i=1:length(vz_list)
     vz=vz_list(vz_i);
     for w_i=1:length(w_list)

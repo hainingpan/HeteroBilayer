@@ -1,4 +1,4 @@
-function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_list,rmap_x,rmap_y]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_list,rmap_x,rmap_y,chern_cond]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
     gap=nan;
     Nai=size(params.ailist,1);  % The expansion of super cell
     if ismember('g',output)
@@ -30,7 +30,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
 
     %% Chern number
     if ismember('c',output)
-        [chern_p,chern_m]=chern_gs(ave1,ave2,epoch,params);
+        [chern_p,chern_m,bcmap_p,bcmap_m]=chern_gs(ave1,ave2,epoch,params);
         chern_str=sprintf('\n(%d)+K:{%.4f} -K:{%.4f}',params.NL,chern_p,chern_m);
     else
         chern_p=nan;
@@ -38,7 +38,17 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         chern_str='';
     end
     
-    
+    %% sigma_xy
+    if ismember('x',output)
+        occ_p=(energyall_p(:,1)<=mu_v);
+        bcmap_p=bcmap_p(:);
+        occ_m=(energyall_m(:,1)<=mu_v);
+        bcmap_m=bcmap_m(:);
+        chern_cond=(sum(bcmap_p(occ_p))+sum(bcmap_m(occ_m)))/(2*pi);
+        chern_cond_str=sprintf('  \\sigma_{xy}=%.4f',chern_cond);
+    else
+        chern_cond=nan;
+    end
     %% Band structure
     if ismember('f',output)
         fig_band=figure;
@@ -88,7 +98,9 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         % end
         energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
         epoch_str=sprintf('\nepoch=%d',epoch);
-        title(strcat(energy_str,chern_str,epoch_str));
+        title(strcat(energy_str,chern_str,chern_cond_str,epoch_str));
+        save(sprintf('energy_w%d_Vb%d_Vz%d_epoch%d',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','mu_v','mu_c','klist','chern_p','chern_m')
+
     else
         fig_band=0;
     end
