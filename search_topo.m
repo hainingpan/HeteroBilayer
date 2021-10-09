@@ -1,10 +1,10 @@
-vz_list=linspace(-50,50,51);
+vz_list=linspace(-100,0,51);
 topo_pK_list=vz_list;
 gap_list=vz_list;
 % topo_mK_list=vz_list;
 for vz_i=1:length(vz_list)
     vz=vz_list(vz_i);
-    params_pK=mainTMD('Nmax',3,'m_b',1.2,'V_t',0,'psi_t',240,'V_b',15,'psi_b',-14,'vz_t',vz,'vz_b',0,'w',20);
+    params_pK=mainTMD('Nmax',2,'V_t',0,'psi_t',240,'V_b',7,'psi_b',-14,'vz_t',vz,'vz_b',0,'w',12);
     % params_pK=mainTMD('Nmax',3,'valley',-1,'V_t',0,'psi_t',240,'V_b',4.1,'psi_b',14,'vz_t',vz,'vz_b',0,'w',1.3);
     [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern_pK]=berrycurvature(1,params_pK);
 %     [kcxmap,kcymap,kcx2map,kcy2map,bcmap,omega,chern_mK]=berrycurvature(1,params_mK);

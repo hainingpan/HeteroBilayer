@@ -29,6 +29,7 @@ function [chern_p,chern_m,bcmap_p,bcmap_m]=chern_gs(ave1,ave2,epoch,params)
         end
         chern_p=sum(bcmap_p(:))/(2*pi);
         chern_m=nan;
+        bcmap_m=nan;
     else
         n=sqrt(size(wfall_p_0,1));
         l_index=1:NL;

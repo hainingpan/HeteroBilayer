@@ -1,20 +1,20 @@
 % function iter_SDW(nu,Nmax)
 Nmax=2;
-nu=[1,1];
+nu=[2,1];
 w=12;
-vz=-10;
+vz=-100;
 Vb=7;
-ep=17;
+ep=15;
 
 params=mainTMD('SDW',10e-3,'d',5,'Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b',-14,'vz_t',vz,'vz_b',0,'w',w,'nu',nu,'n',15,'epsilon',ep,'shift',2);
 [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
 [ave1,ave2,occ]=average(energyall,wfall,0,params); 
 
 [gap,tot,fig1,fig2]=plotline_2(energyall,0,0,V1_ave_delta,V2_ave_delta,ave1,ave2,0,strcat('fs',params.chern),params);
-fig_tot=figure;
 gap_list=[gap];
 tot_list=[tot];
 fprintf("%d: Gap=%e (meV), E=%e (meV)\n",0,gap*1e3,tot*1e3);
+fig_tot=figure;
 for i=1:100
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,i,params);    
     [ave1_n,ave2_n,occ]=average(energyall,wfall,i,params);
