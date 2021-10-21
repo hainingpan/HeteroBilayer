@@ -104,7 +104,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
         epoch_str=sprintf('\nepoch=%d',epoch);
         title(strcat(energy_str,chern_str,chern_cond_str,epoch_str));
-        % save(sprintf('energy_w%d_Vb%d_Vz%d_epoch%d',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','mu_v','mu_c','klist','chern_p','chern_m')
+        % save(sprintf('energy_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','mu_v','mu_c','klist','chern_p','chern_m')
     else
         fig_band=0;
     end

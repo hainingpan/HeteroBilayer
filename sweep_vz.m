@@ -59,7 +59,7 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
     ave1=ave1_n;
     ave2=ave2_n;    
     epoch=epoch+1;
-    for i=1:100
+    for i=1:1000
         [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,epoch,params);
         [ave1_n,ave2_n,occ]=average(energyall,wfall,epoch,params);       
         [gap,tot]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,'',params);
