@@ -55,6 +55,7 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
             ave1_1=ave1;
             ave2_1=ave2;
             epoch_1=epoch;
+            vz_t_1_list(end+1)=vz_t;
         else
             assert(isempty(chern_p_0_list),'both are on the trivial side')
             chern_p_0_list(1)=chern_p;
@@ -72,12 +73,13 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
             ave1_0=ave1;
             ave2_0=ave2;
             epoch_0=epoch;
+            vz_t_0_list(end+1)=vz_t;
         end
     end
     left=vz_t_list(1); %assume it's trivial
     right=vz_t_list(2); %assme it's topological
     
-    while gap_list(end)>1e-3 & abs(right-left)<1e-6
+    while gap_list(end)>1e-3 & abs(right-left)>1e-6
         middle=(left+right)/2;
         vz_t=middle;
         fprintf("vz_t=%e\n",vz_t);
@@ -100,6 +102,7 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
             % epoch_1=epoch;
             ave1_1=ave1;
             ave2_1=ave2;
+            vz_t_1_list(end+1)=vz_t;
             right=middle;
         else
             chern_p_0_list(end+1)=chern_p;
@@ -117,11 +120,10 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
             % epoch_0=epoch;
             ave1_0=ave1;
             ave2_0=ave2;
+            vz_t_0_list(end+1)=vz_t;
             left=middle;
         end
     end
-
-
 
     save(sprintf('phase_nu%d,%d_ep%.1f_w%.1f_Vb%.1f_d%.1f_Nk%d.mat',nu(1),nu(2),ep,w,Vb,d,Nk),'chern_p_0_list','chern_m_0_list','gap_final_0_list','tot_final_0_list','vz_t_0_list','s0_0_list','sx_0_list','sy_0_list','sz_0_list','rmap_x_0_list','rmap_y_0_list','chern_p_1_list','chern_m_1_list','gap_final_1_list','tot_final_1_list','vz_t_1_list','s0_1_list','sx_1_list','sy_1_list','sz_1_list','rmap_x_1_list','rmap_y_1_list');
 end
