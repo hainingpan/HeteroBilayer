@@ -10,6 +10,7 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
     sz_0_list={};
     rmap_x_0_list={};
     rmap_y_0_list={};
+    vz_t_0_list=[];
 
     chern_p_1_list=[];
     chern_m_1_list=[];
@@ -21,6 +22,7 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
     sz_1_list={};
     rmap_x_1_list={};
     rmap_y_1_list={};
+    vz_t_1_list=[];
 
     epoch_list=vz_t_list*0;
     ave1=0;
