@@ -77,7 +77,7 @@ function binary_vz(nu,Nmax,w,Nk,ep,Vb,d,vz_t_list)
     left=vz_t_list(1); %assume it's trivial
     right=vz_t_list(2); %assme it's topological
     
-    while gap_list(end)>1e-3
+    while gap_list(end)>1e-3 & abs(right-left)<1e-6
         middle=(left+right)/2;
         vz_t=middle;
         fprintf("vz_t=%e\n",vz_t);
