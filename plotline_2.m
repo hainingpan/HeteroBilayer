@@ -104,9 +104,20 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
         epoch_str=sprintf('\nepoch=%d',epoch);
         title(strcat(energy_str,chern_str,chern_cond_str,epoch_str));
-        % save(sprintf('energy_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','mu_v','mu_c','klist','chern_p','chern_m')
+        save(sprintf('energy_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','mu_v','mu_c','klist','chern_p','chern_m')
     else
         fig_band=0;
+    end
+    if ismember('z', output)
+        [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'bz',epoch,params);
+%         figure;scatter(params.k_bz(:,1),params.k_bz(:,2),energyall_m(:,1)*0+5,energyall_m(:,1));
+        kx_list=linspace(min(params.k_bz(:,1)),max(params.k_bz(:,1)));
+        ky_list=linspace(min(params.k_bz(:,2)),max(params.k_bz(:,2)));
+        [kxq,kyq]=meshgrid(kx_list,ky_list);
+        vq=griddata(params.k_bz(:,1),params.k_bz(:,2),1e3*energyall_p(:,2),kxq,kyq);
+        figure;contour(kx_list,ky_list,vq);
+        colorbar;
+        daspect([1,1,1]);
     end
     %% Spin
     if ismember('s',output)

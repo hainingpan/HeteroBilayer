@@ -4,6 +4,7 @@ q_set=(params.q);
 Nb=size(b_set,1);
 Nq=size(q_set,1);
 Nai=size(params.ailist,1);  % The expansion of super cell
+ignoreK=0;
 if strcmp(tag,'bc')
     k_beta_set=params.k_bc;
 end
@@ -15,8 +16,15 @@ if strcmp(tag,'line')
     % k_beta_set=params.k_line_C3;
     % k_beta_set=[0,0];
 end
+if strcmp(tag,'bz')
+    k_beta_set=params.k_bz;
+end
 if strcmp(tag,'dense')
     k_beta_set=params.k_dense;
+end
+if strcmp(tag,'C3')
+    k_beta_set=params.k_C3;
+    ignoreK=1;
 end
 Nk0=size(params.k,1);
 Nk=size(k_beta_set,1);
@@ -117,7 +125,7 @@ herr=max(sum(abs(H-conj(permute(H,[2,1,3]))),[1,2]));
 assert(herr<1e-12,sprintf("hermitian error: %e\n",herr));
 H=1/2*(H+conj(permute(H,[2,1,3])));
 
-if isequal(H(1:end/2,end/2+1:end,1),0*H(1:end/2,end/2+1:end,1))
+if isequal(H(1:end/2,end/2+1:end,1),0*H(1:end/2,end/2+1:end,1)) & ~ignoreK
     energyall_p=zeros(Nk,Nb*Nq*2);
     energyall_m=zeros(Nk,Nb*Nq*2);
     wfall_p=zeros(Nk,Nb*Nq*2,Nb*Nq*2);
@@ -130,7 +138,7 @@ else
 end
 for k_beta_index=1:Nk
     H_tau=H(:,:,k_beta_index);
-    if isequal(H_tau(1:end/2,end/2+1:end),0*H_tau(1:end/2,end/2+1:end))
+    if isequal(H_tau(1:end/2,end/2+1:end),0*H_tau(1:end/2,end/2+1:end)) & ~ignoreK
         H_p=H_tau(1:end/2,1:end/2);
         H_m=H_tau(end/2+1:end,end/2+1:end);
         [vec_p,val_p]=eig(H_p);

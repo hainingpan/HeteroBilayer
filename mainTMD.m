@@ -395,6 +395,8 @@ function params=mainTMD(varargin)
         % params.k_index=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k=params.k_index*[params.bm1;params.bm2];
 
+        params.k_C3=params.k*rotate(pi/3*2);
+
         [ux,uy]=ndgrid(1:params.dense_factor*params.n,1:params.dense_factor*params.n);
         params.k_dense_index=[(ux(:)-1)/(params.dense_factor*params.n),(uy(:)-1)/(params.dense_factor*params.n)];
         params.k_dense=params.k_dense_index*[params.bm1;params.bm2];
@@ -404,6 +406,10 @@ function params=mainTMD(varargin)
         % params.k_index_bc=[(2*ux(:)-1)/(2*params.n),(2*uy(:)-1)/(2*params.n)];
         % params.k_index_bc=[(ux(:)-1)/(params.n),(uy(:)-1)/(params.n)];
         params.k_bc=params.k_index_bc*[params.bm1;params.bm2];
+
+        nshell=floor(params.n);
+        u_index=generate_shell(nshell)/nshell;
+        params.k_bz=u_index*[params.bM1;params.bM2]/sqrt(3)*rotate(pi/6);
 
         if params.sigma_xy==1
             [ux,uy]=ndgrid(0:params.dense_factor*params.n,0:params.dense_factor*params.n);
