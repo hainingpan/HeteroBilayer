@@ -1,5 +1,5 @@
-function sweep_ep(nu,Nmax,w,Nk,vz_t,Vb,d)
-    ep_list=1./linspace(0,1/50,10);
+function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
+    ep_list=1./linspace(0,1/50,2);
     chern_p_list=ep_list;
     chern_m_list=ep_list;
     gap_final_list={};
@@ -17,7 +17,7 @@ function sweep_ep(nu,Nmax,w,Nk,vz_t,Vb,d)
     ave2=0;
     epoch=0;
     
-    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b',-14,'vz_b',0,'w',w,'nu',nu,'n',Nk,'Vz_t',vz_t,'d',d);
+    params=mainTMD('Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b',-14,'vz_b',0,'w',w,'nu',nu,'n',Nk,'Vz_t',Vz_t,'d',d);
     for ep_index=1:length(ep_list)
         epsilon=ep_list(ep_index);
         fprintf("epsilon=%.1f\n",epsilon);
