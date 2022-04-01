@@ -81,6 +81,7 @@ function params=mainTMD(varargin)
     end
 
 
+
     % QAHE(FM_z), spanned by b
     if params.nu==[1,1]
         ailist=[0,0];
@@ -89,8 +90,8 @@ function params=mainTMD(varargin)
         params.fermisurface=0;
         params.shift=1;
         params.SDW=0;
-        params.dense_factor=2;
-        params.sigma_xy=1;
+        % params.dense_factor=2;
+        % params.sigma_xy=1;
     end
     % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
@@ -471,6 +472,8 @@ function params=mainTMD(varargin)
             params.S_tau=0;
         end
 
+        
+
         % For the detailed def, check oneNotes
         [q_a_x,q_b_x,q_g_x,q_d_x,b_a_x,b_b_x,b_g_x,b_d_x]=ndgrid(params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.q_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1),params.b_index(:,1));
         delta_x=-q_a_x-b_a_x+q_b_x+b_b_x+q_g_x+b_g_x-q_d_x-b_d_x;
@@ -507,3 +510,5 @@ function params=mainTMD(varargin)
         assert(sum(isnan(params.V2(:)))==0,'V2 has NaN');
         params.V2=tensor(params.V2,[Nk,Nk,Nq,Nq,Nb,Nb]);
     end
+
+end

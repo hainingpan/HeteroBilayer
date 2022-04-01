@@ -38,7 +38,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         chern_str='';
     end
     
-    %% sigma_xy
+    %% sigma_xy Hall conductance
     if ismember('x',output)
         occ_p=(energyall_p(:,1)<=mu_v);
         bcmap_p=bcmap_p(:);
@@ -108,6 +108,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
     else
         fig_band=0;
     end
+    %% band structure in the BZ
     if ismember('z', output)
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'bz',epoch,params);
 %         figure;scatter(params.k_bz(:,1),params.k_bz(:,2),energyall_m(:,1)*0+5,energyall_m(:,1));
@@ -118,6 +119,12 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         figure;contour(kx_list,ky_list,vq);
         colorbar;
         daspect([1,1,1]);
+    end
+    %% density of states
+    if ismember('d',output)
+        [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'bz',epoch,params);
+        [dos_list,en_list,nu_list,E_vanHove]=DOS(energyall_p(:,1),params);
+        save(sprintf('DOS_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','dos_list','en_list','nu_list','E_vanHove')
     end
     %% Spin
     if ismember('s',output)
