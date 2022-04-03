@@ -20,29 +20,11 @@ function [dos_list,en_list,nu_list,E_vanHove]=DOS(energy_list,params)
     dos_list=dos_list/(sqrt(3)/2*(params.aM/5.076e-3)^2);
     [~,I]=max(dos_list);
     E_vanHove=en_list(I);
-
     
     Omega_list=zeros(length(en_list),1);
     for i=1:length(en_list)
         Omega_list(i)=sum(en_list(i)>=energy_list);
     end
     nu_list=Omega_list/length(energy_list);
-    
-    % figure;plot(en_list,dos_list/(sqrt(3)/2*(params.aM/5.076e-3)^2));
-    % xlim([min(energy_list),max(energy_list)]);
-
-    % pairs=unique([energy_list,Omega_list],'row','stable');
-    % energy_list_u=pairs(:,1);
-    % Omega_list_u=pairs(:,2);
-    % % f=interp1(energy_list_u,Omega_list_u,'linear','pp');
-    % % f_1=fnder(f,1);
-    % % slopes=ppval(f_1,energy_list_u);
-    % en_list=linspace(min(energy_list),max(energy_list),200);
-    % f=polyfit(energy_list_u,Omega_list_u,4);
-    % y=polyval(f,en_list);
-    % figure;
-    % plot(en_list,y);
-    % hold on;
-    % plot(energy_list_u,Omega_list_u,'.')
-
+ 
 end

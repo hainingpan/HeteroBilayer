@@ -117,7 +117,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         [kxq,kyq]=meshgrid(kx_list,ky_list);
         energymesh_p=griddata(params.k_bz(:,1),params.k_bz(:,2),energyall_p(:,1),kxq,kyq);
         energymesh_m=griddata(params.k_bz(:,1),params.k_bz(:,2),energyall_m(:,1),kxq,kyq);
-        [dos_list,en_list,nu_list,E_vanHove]=DOS(energymesh_p(:),params)
+        [dos_list,en_list,nu_list,E_vanHove]=DOS(energymesh_p(:),params);
 
         save(sprintf('DOS_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energymesh_p','energymesh_m','dos_list','en_list','nu_list','E_vanHove')
 
