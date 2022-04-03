@@ -16,7 +16,7 @@ function [dos_list,en_list,nu_list,E_vanHove]=DOS(energy_list,params)
     % Omega number of states
     energy_list=energy_list(~isnan(energy_list));
     energy_list=sort(energy_list);
-    [dos_list,en_list]=ksdensity(energy_list,'bandwidth',0.1e-3);
+    [dos_list,en_list]=ksdensity(energy_list,'bandwidth',0.1e-3,'NumPoints',500);
     dos_list=dos_list/(sqrt(3)/2*(params.aM/5.076e-3)^2);
     [~,I]=max(dos_list);
     E_vanHove=en_list(I);
