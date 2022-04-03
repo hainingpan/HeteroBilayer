@@ -112,19 +112,23 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
     if ismember('z', output)
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'bz',epoch,params);
 %         figure;scatter(params.k_bz(:,1),params.k_bz(:,2),energyall_m(:,1)*0+5,energyall_m(:,1));
-        kx_list=linspace(min(params.k_bz(:,1)),max(params.k_bz(:,1)));
-        ky_list=linspace(min(params.k_bz(:,2)),max(params.k_bz(:,2)));
+        kx_list=linspace(min(params.k_bz(:,1)),max(params.k_bz(:,1)),1000);
+        ky_list=linspace(min(params.k_bz(:,2)),max(params.k_bz(:,2)),1000);
         [kxq,kyq]=meshgrid(kx_list,ky_list);
-        vq=griddata(params.k_bz(:,1),params.k_bz(:,2),1e3*energyall_p(:,2),kxq,kyq);
-        figure;contour(kx_list,ky_list,vq);
-        colorbar;
-        daspect([1,1,1]);
+        energymesh_p=griddata(params.k_bz(:,1),params.k_bz(:,2),energyall_p(:,1),kxq,kyq);
+        energymesh_m=griddata(params.k_bz(:,1),params.k_bz(:,2),energyall_m(:,1),kxq,kyq);
+        [dos_list,en_list,nu_list,E_vanHove]=DOS(energymesh_p(:),params)
+
+        save(sprintf('DOS_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energymesh_p','energymesh_m','dos_list','en_list','nu_list','E_vanHove')
+
+        % figure;contour(kx_list,ky_list,vq);
+        % colorbar;
+        % daspect([1,1,1]);
     end
     %% density of states
     if ismember('d',output)
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'bz',epoch,params);
         [dos_list,en_list,nu_list,E_vanHove]=DOS(energyall_p(:,1),params);
-        save(sprintf('DOS_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','dos_list','en_list','nu_list','E_vanHove')
     end
     %% Spin
     if ismember('s',output)

@@ -18,5 +18,5 @@ params=mainTMD('SDW',10e-3,'d',5,'Nmax',Nmax,'V_t',0,'psi_t',240,'V_b',Vb,'psi_b
 [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
 [ave1,ave2,occ]=average(energyall,wfall,0,params); 
 
-[gap,tot]=plotline_2(energyall,0,0,V1_ave_delta,V2_ave_delta,ave1,ave2,0,strcat('fsd',params.chern),params);
+[gap,tot]=plotline_2(energyall,0,0,V1_ave_delta,V2_ave_delta,ave1,ave2,0,strcat('fsz',params.chern),params);
 end
