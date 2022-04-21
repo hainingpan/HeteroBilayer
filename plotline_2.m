@@ -1,12 +1,27 @@
 function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_list,rmap_x,rmap_y,chern_cond]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
     gap=nan;
     Nai=size(params.ailist,1);  % The expansion of super cell
+    % gap
     if ismember('g',output)
-        [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'dense',epoch,params);
+        % [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'dense',epoch,params);
+        [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'bc',epoch,params);
         if prod(size(energyall_m))>1
-            energyall_sort=sort([energyall_p(:);energyall_m(:)]);
+            energyall_p_dense=zeros(size(params.k_dense,1),size(energyall_p,2));
+            energyall_m_dense=zeros(size(params.k_dense,1),size(energyall_m,2));
+            for level=1:size(energyall_p,2)
+                energyall_p_dense(:,level)=griddata(params.k_bc(:,1),params.k_bc(:,2),energyall_p(:,level),params.k_dense(:,1),params.k_dense(:,2));
+                energyall_m_dense(:,level)=griddata(params.k_bc(:,1),params.k_bc(:,2),energyall_m(:,level),params.k_dense(:,1),params.k_dense(:,2));
+            end
+            % energyall_p=energyall_p_dense;
+            % energyall_m=energyall_m_dense;
+            energyall_sort=sort([energyall_p_dense(:);energyall_m_dense(:)]);
         else
-            energyall_sort=sort(energyall_p(:));
+            energyall_p_dense=zeros(size(params.k_dense,1),size(energyall_p,2));
+            for level=1:size(energyall_p,2)
+                energyall_p_dense(:,level)=griddata(params.k_bc(:,1),params.k_bc(:,2),energyall_p(:,level),params.k_dense(:,1),params.k_dense(:,2));
+            end
+            % energyall_p=energyall_p_dense;
+            energyall_sort=sort(energyall_p_dense(:));
         end
         Nk=size(params.k_dense,1);
     else
@@ -28,6 +43,8 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
     end
 
+    
+
     %% Chern number
     if ismember('c',output)
         [chern_p,chern_m,bcmap_p,bcmap_m]=chern_gs(ave1,ave2,epoch,params);
@@ -38,7 +55,7 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         chern_str='';
     end
     
-    %% sigma_xy Hall conductance
+    %% sigma_xy Hall conductance (problematic, may need to change, suppress for now)
     if ismember('x',output)
         occ_p=(energyall_p(:,1)<=mu_v);
         bcmap_p=bcmap_p(:);
