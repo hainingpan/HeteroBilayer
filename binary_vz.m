@@ -137,7 +137,9 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,epoch,params);
     [ave1_n,ave2_n,occ]=average(energyall,wfall,epoch,params); 
     
-    [gap,tot]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,0,'',params);
+    re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,0,'',params);
+    gap=re.gap;
+    tot=re.tot;
     
     gap_list=[gap];
     tot_list=[tot];
@@ -148,7 +150,9 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
     for i=1:1000
         [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,epoch,params);
         [ave1_n,ave2_n,occ]=average(energyall,wfall,epoch,params);       
-        [gap,tot]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,'',params);
+        re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,'',params);
+        gap=re.gap;
+        tot=re.tot;
         gap_list(end+1)=gap;
         tot_list(end+1)=tot;
         ave1=ave1_n;
@@ -162,7 +166,18 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
         epoch=epoch+1;
     end
     fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Vb%.1f_Nk_%d_Vzt_%.1f_d%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,1000*params.V_b,params.n,params.Vz_t*1000,params.d/(1e-9*5.076e6),params.epsilon);
-    [~,~,fig_band,fig_spin,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y,chern_cond]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fsgx',params.chern),params);
+    re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fsgx',params.chern),params);
+    fig_band=re.fig_band;
+    fig_spin=re.fig_spin;
+    chern_p=re.chern_p;
+    chern_m=re.chern_m;
+    s0=re.s0_list;
+    sx=re.sx_list;
+    sy=re.sy_list;
+    sz=re.sz_list;
+    rmap_x=re.rmap_x;
+    rmap_y=re.rmap_y;
+    chern_cond=re.chern_cond;
     savefig(fig_band,strcat(fn,'_band.fig'));
     savefig(fig_spin,strcat(fn,'_spin.fig'));
 end

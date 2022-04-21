@@ -44,7 +44,7 @@ function params=mainTMD(varargin)
 
     params.Kb=4*pi/(3*params.aM)*[-1/2,sqrt(3)/2];
     params.Kt=4*pi/(3*params.aM)*[1/2,sqrt(3)/2];
-    params.dense_factor=2;
+    params.dense_factor=3;
 
     if mod(params.n,3)~=0
         warning('n={%d} is not multiple of 3, which does not go through K point',params.n);

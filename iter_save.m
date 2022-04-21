@@ -3,7 +3,10 @@ function iter_save(nu,Nmax,w,Nk,vz_t,ep)
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(0,0,0,params);
     [ave1,ave2,occ]=average(energyall,wfall,0,params); 
     
-    [gap,tot]=plotline_2(energyall,0,0,V1_ave_delta,V2_ave_delta,ave1,ave2,0,'',params);
+    re=plotline_2(energyall,0,0,V1_ave_delta,V2_ave_delta,ave1,ave2,0,'',params);
+    
+    gap=re.gap;
+    tot=re.tot;
     
     gap_list=[gap];
     tot_list=[tot];
@@ -11,7 +14,9 @@ function iter_save(nu,Nmax,w,Nk,vz_t,ep)
     for i=1:500
         [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,i,params);
         [ave1_n,ave2_n,occ]=average(energyall,wfall,i,params);       
-        [gap,tot]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,'',params);
+        re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,'',params);
+        gap=re.gap;
+        tot=re.tot;
         gap_list(end+1)=gap;
         tot_list(end+1)=tot;
         pct_change=((tot_list(end)-tot_list(end-1))/tot_list(end-1));
@@ -24,7 +29,13 @@ function iter_save(nu,Nmax,w,Nk,vz_t,ep)
         end
     end
     fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Nk_%d_Vzt_%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,Nk,vz_t,ep);
-    [gap,tot,fig_band,fig_spin,chern_p,chern_m]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,strcat('fsg',params.chern),params);
+    re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,i,strcat('fsg',params.chern),params);
+    gap=re.gap;
+    tot=re.tot;
+    fig_band=re.fig_band;
+    fig_spin=re.fig_spin;
+    chern_p=re.chern_p;
+    chern_m=re.chern_m;
     savefig(fig_band,strcat(fn,'_band.fig'));
     savefig(fig_spin,strcat(fn,'_spin.fig'));
     save(strcat(fn,'.mat'),'gap_list','tot_list','i','chern_p','chern_m');

@@ -1,5 +1,5 @@
-function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_list,rmap_x,rmap_y,chern_cond]=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
-    gap=nan;
+function re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,output,params)
+    re.gap=nan;
     Nai=size(params.ailist,1);  % The expansion of super cell
     % gap
     if ismember('g',output)
@@ -12,15 +12,12 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
                 energyall_p_dense(:,level)=griddata(params.k_bc(:,1),params.k_bc(:,2),energyall_p(:,level),params.k_dense(:,1),params.k_dense(:,2));
                 energyall_m_dense(:,level)=griddata(params.k_bc(:,1),params.k_bc(:,2),energyall_m(:,level),params.k_dense(:,1),params.k_dense(:,2));
             end
-            % energyall_p=energyall_p_dense;
-            % energyall_m=energyall_m_dense;
             energyall_sort=sort([energyall_p_dense(:);energyall_m_dense(:)]);
         else
             energyall_p_dense=zeros(size(params.k_dense,1),size(energyall_p,2));
             for level=1:size(energyall_p,2)
                 energyall_p_dense(:,level)=griddata(params.k_bc(:,1),params.k_bc(:,2),energyall_p(:,level),params.k_dense(:,1),params.k_dense(:,2));
             end
-            % energyall_p=energyall_p_dense;
             energyall_sort=sort(energyall_p_dense(:));
         end
         Nk=size(params.k_dense,1);
@@ -30,28 +27,23 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
     end
     mu_v=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));
     mu_c=energyall_sort(1+Nk*Nai*params.nu(1)/(params.nu(2)));
-    % mu_v_index=find(energyall==mu_v,1);
-    % mu_c_index=find(energyall==mu_c,1);
-    % [mu_v_k_index,mu_v_l_index]=ind2sub(size(energyall),mu_v_index);
-    % [mu_c_k_index,mu_c_l_index]=ind2sub(size(energyall),mu_c_index);
-    % gap_str=sprintf('\nv:%d,%d c:%d,%d',mu_v_k_index,mu_v_l_index,mu_c_k_index,mu_c_l_index);
-    gap=mu_c-mu_v;
-    % tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
+    re.gap=mu_c-mu_v;
+
     if prod(size(V1_ave_delta))>1 && prod(size(V2_ave_delta))>1
-        tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1,ave2,epoch,params);
+        re.tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1,ave2,epoch,params);
     else
-        tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
+        re.tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,params);
     end
 
     
 
     %% Chern number
     if ismember('c',output)
-        [chern_p,chern_m,bcmap_p,bcmap_m]=chern_gs(ave1,ave2,epoch,params);
-        chern_str=sprintf('\n(%d)+K:{%.4f} -K:{%.4f}',params.NL,chern_p,chern_m);
+        [re.chern_p,re.chern_m,bcmap_p,bcmap_m]=chern_gs(ave1,ave2,epoch,params);
+        chern_str=sprintf('\n(%d)+K:{%.4f} -K:{%.4f}',params.NL,re.chern_p,re.chern_m);
     else
-        chern_p=nan;
-        chern_m=nan;
+        re.chern_p=nan;
+        re.chern_m=nan;
         chern_str='';
     end
     
@@ -60,20 +52,20 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         occ_p=(energyall_p(:,1)<=mu_v);
         bcmap_p=bcmap_p(:);
         if isnan(bcmap_m)
-            chern_cond=sum(bcmap_p(occ_p))/(2*pi);
+            re.chern_cond=sum(bcmap_p(occ_p))/(2*pi);
         else
             occ_m=(energyall_m(:,1)<=mu_v);
             bcmap_m=bcmap_m(:);
-            chern_cond=(sum(bcmap_p(occ_p))+sum(bcmap_m(occ_m)))/(2*pi);
+            re.chern_cond=(sum(bcmap_p(occ_p))+sum(bcmap_m(occ_m)))/(2*pi);
         end
-        chern_cond_str=sprintf('  \\sigma_{xy}=%.4f',chern_cond);
+        chern_cond_str=sprintf('  \\sigma_{xy}=%.4f',re.chern_cond);
     else
-        chern_cond=nan;
+        re.chern_cond=nan;
         chern_cond_str='';
     end
     %% Band structure
     if ismember('f',output)
-        fig_band=figure;
+        re.fig_band=figure;
         
         hold on;
         [energyall_p,energyall_m,~,~]=energyMF_bc(ave1,ave2,'line',epoch,params);
@@ -88,12 +80,6 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         end
         yline(1000*mu_v,'color','k','LineStyle','--');
         yline(1000*mu_c,'color','k','LineStyle','--');
-        % xline(klist(40),'color','k','LineStyle','--','HandleVisibility','off');
-        % xline(klist(40+40-1),'color','k','LineStyle','--','HandleVisibility','off');
-        % xline(klist(40+40-1+40-1),'color','k','LineStyle','--','HandleVisibility','off');
-        % xticks(klist([1,40,40+40-1,40+40-1+40-1]))
-        % xticklabels({'\kappa_t_0','\kappa_t_1','\kappa_t_2','\kappa_t_0'});
-        % xlim([klist(1),klist(40+40-1+40-1)])
         xline(klist(40),'color','k','LineStyle','--','HandleVisibility','off');
         xline(klist(40+40-1),'color','k','LineStyle','--','HandleVisibility','off');
         xline(klist(40+40-1+80-1),'color','k','LineStyle','--','HandleVisibility','off');
@@ -108,22 +94,14 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         xlabel('|k_m|')
         ylabel('E (meV)')
         drawnow;
-        
-        % Though not sure whick k the gap is at, we can still compare the gap in line plot with the one using a mesh over entire BZ.
-        % if ~isnan(gap)
-        %     energyall=sort([energyall_p(:);energyall_m(:)]);
-        %     energy_unocc=energyall(energyall>mu_v);
-        %     gap_line=energy_unocc(1)-mu_v;
-        %     if gap_line<gap
-        %         gap=gap_line;
-        %     end
-        % end
-        energy_str=sprintf('Gap: %e (meV) E: %e (meV)',gap*1000,tot*1000);
+        energy_str=sprintf('Gap: %e (meV) E: %e (meV)',re.gap*1000,re.tot*1000);
         epoch_str=sprintf('\nepoch=%d',epoch);
         title(strcat(energy_str,chern_str,chern_cond_str,epoch_str));
+        chern_p=re.chern_p;
+        chern_m=re.chern_m;
         save(sprintf('energy_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energyall_p','energyall_m','mu_v','mu_c','klist','chern_p','chern_m')
     else
-        fig_band=0;
+        re.fig_band=0;
     end
     %% band structure in the BZ
     if ismember('z', output)
@@ -138,9 +116,6 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
 
         save(sprintf('DOS_w%d_Vb%d_Vz%.1f_epoch%d.mat',params.w*1e3,params.V_b*1e3,params.Vz_t*1e3,epoch),'energymesh_p','energymesh_m','dos_list','en_list','nu_list','E_vanHove')
 
-        % figure;contour(kx_list,ky_list,vq);
-        % colorbar;
-        % daspect([1,1,1]);
     end
     %% density of states
     if ismember('d',output)
@@ -153,23 +128,23 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         [sitesX_index,sitesY_index]=meshgrid(-1:3);
         rmap=[X_index(:),Y_index(:)]*[params.am1;params.am2];
         rsite=[sitesX_index(:),sitesY_index(:)]*[params.aM1;params.aM2];
-        rmap_x=rmap(:,1);
-        rmap_y=rmap(:,2);
-        fig_spin=figure('Position', [10 10 900 600]);
-        s0_list=zeros(size(rmap));
-        sx_list=zeros(size(rmap));
-        sy_list=zeros(size(rmap));
-        sz_list=zeros(size(rmap));
+        re.rmap_x=rmap(:,1);
+        re.rmap_y=rmap(:,2);
+        re.fig_spin=figure('Position', [10 10 900 600]);
+        re.s0_list=zeros(size(rmap));
+        re.sx_list=zeros(size(rmap));
+        re.sy_list=zeros(size(rmap));
+        re.sz_list=zeros(size(rmap));
         for l=1:2
-            [s0,sx,sy,sz]=S_r(ave2_n,rmap_x,rmap_y,l,params);
-            s0_list(:,l)=s0;
-            sx_list(:,l)=sx;
-            sy_list(:,l)=sy;
-            sz_list(:,l)=sz;
+            [s0,sx,sy,sz]=S_r(ave2_n,re.rmap_x,re.rmap_y,l,params);
+            re.s0_list(:,l)=s0;
+            re.sx_list(:,l)=sx;
+            re.sy_list(:,l)=sy;
+            re.sz_list(:,l)=sz;
             subplot(2, 2, 2*l-1);
             hold on;
-            scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,sz(:),'filled');
-            quiver(rmap_x(:)/params.aM,rmap_y(:)/params.aM,(sx(:)/20),(sy(:)/20),'AutoScale','off');
+            scatter(re.rmap_x(:)/params.aM,re.rmap_y(:)/params.aM,10,sz(:),'filled');
+            quiver(re.rmap_x(:)/params.aM,re.rmap_y(:)/params.aM,(sx(:)/20),(sy(:)/20),'AutoScale','off');
             titlespin=sprintf('%s: epoch=%d\n',(l==1)*'b'+(l==2)*'t',epoch);
             if Nai==3
                 ABC_list=[1,(size(rmap,1)-1)/3+1,(size(rmap,1)-1)/3*2+1];
@@ -184,19 +159,19 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
             title(strcat(titlespin,titlespint));
             daspect([1,1,1]);
             scatter(rsite(:,1)/params.aM,rsite(:,2)/params.aM);
-            xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
-            ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
+            xlim([min(re.rmap_x)*1.1,max(re.rmap_x)*1.1]/params.aM);
+            ylim([min(re.rmap_y)*1.1,max(re.rmap_y)*1.1]/params.aM);
             xlabel('x/|a_M|')
             ylabel('y/|a_M|')
             cb=colorbar;
             cb.Title.String='S_z';
             subplot(2, 2, 2*l);
             hold on;
-            scatter(rmap_x(:)/params.aM,rmap_y(:)/params.aM,10,s0(:),'filled');
+            scatter(re.rmap_x(:)/params.aM,re.rmap_y(:)/params.aM,10,s0(:),'filled');
             title(sprintf('%s: epoch=%d',(l==1)*'b'+(l==2)*'t',epoch));
             daspect([1,1,1]);
-            xlim([min(rmap_x)*1.1,max(rmap_x)*1.1]/params.aM);
-            ylim([min(rmap_y)*1.1,max(rmap_y)*1.1]/params.aM);
+            xlim([min(re.rmap_x)*1.1,max(re.rmap_x)*1.1]/params.aM);
+            ylim([min(re.rmap_y)*1.1,max(re.rmap_y)*1.1]/params.aM);
             xlabel('x/|a_M|')
             ylabel('y/|a_M|')
             cb=colorbar;
@@ -205,13 +180,13 @@ function [gap,tot,fig_band,fig_spin,chern_p,chern_m,s0_list,sx_list,sy_list,sz_l
         
         drawnow
     else
-        fig_spin=0;
-        s0=nan;
-        sx=nan;
-        sy=nan;
-        sz=nan;
-        rmap_x=nan;
-        rmap_y=nan;
+        re.fig_spin=0;
+        re.s0_list=nan;
+        re.sx_list=nan;
+        re.sy_list=nan;
+        re.sz_list=nan;
+        re.rmap_x=nan;
+        re.rmap_y=nan;
     end
     
 end
