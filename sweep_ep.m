@@ -44,7 +44,7 @@ function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
         pol_list(ep_index)=pol;
     end
 
-    save(sprintf('phase_nu%d,%d_Vz%.1f_w%.1f_Vb%.1f_d%.1f_Nk%d.mat',nu(1),nu(2),Vz_t,w,Vb,d,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','ep_list','s0_list','sx_list','sy_list','sz_list','rmap_x_list','rmap_y_list');
+    save(sprintf('phase_nu%d,%d_Vz%.1f_w%.1f_Vb%.1f_d%.1f_Nk%d.mat',nu(1),nu(2),Vz_t,w,Vb,d,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','ep_list','s0_list','sx_list','sy_list','sz_list','rmap_x_list','rmap_y_list','pol_list');
 end
 
 

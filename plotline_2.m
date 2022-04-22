@@ -32,7 +32,7 @@ function re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2
     % polarization of positive
     if ismember('p',output)
         if prod(size(energyall_m))>1
-            re.pol=(nnz(energyall_p(:)<mu_v)-nnz(energyall_m(:)<mu_v))/(nnz(energyall_p(:)<mu_v)+nnz(energyall_m(:)<mu_v));
+            re.pol=(nnz(energyall_p_dense(:)<mu_v)-nnz(energyall_m_dense(:)<mu_v))/(nnz(energyall_p_dense(:)<mu_v)+nnz(energyall_m_dense(:)<mu_v));
         else
             re.pol=nan;
         end
