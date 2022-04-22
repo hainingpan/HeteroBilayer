@@ -1,6 +1,6 @@
 function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
-%     ep_list=linspace(25,15,101);
-    ep_list=1./linspace(0,1/50,20);
+    ep_list=linspace(25,15,101);
+    % ep_list=1./linspace(0,1/50,20);
     chern_p_list=ep_list;
     chern_m_list=ep_list;
     gap_final_list={};
@@ -77,7 +77,7 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
         drawnow;
         pct_change=((tot_list(end)-tot_list(end-1))/tot_list(end-1));
         fprintf("%d: Gap=%.10f (meV), E=%.10f (meV), change=%e\n",i,gap*1e3,tot*1e3,pct_change);
-        if abs(pct_change)<1e-7
+        if abs(pct_change)<1e-9
             break;
         end
         epoch=epoch+1;
