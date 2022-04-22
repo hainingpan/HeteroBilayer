@@ -1,6 +1,6 @@
 function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
-    ep_list=linspace(25,15,2);
-%     ep_list=1./linspace(0,1/50,20);
+%     ep_list=linspace(25,15,101);
+    ep_list=1./linspace(0,1/50,20);
     chern_p_list=ep_list;
     chern_m_list=ep_list;
     gap_final_list={};
@@ -12,6 +12,7 @@ function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
     rmap_x_list={};
     rmap_y_list={};
     % chern_cond_list=ep_list;
+   pol_list=ep_list;
 
     epoch_list=ep_list;
     ave1=0;
@@ -25,7 +26,7 @@ function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
 %         ave1=0;
 %         ave2=0;
 %         epoch=0;
-        [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y,chern_cond]=iter(epsilon,ave1,ave2,epoch,params);
+        [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y,chern_cond,pol]=iter(epsilon,ave1,ave2,epoch,params);
 
         chern_p_list(ep_index)=chern_p;
         chern_m_list(ep_index)=chern_m;
@@ -40,6 +41,7 @@ function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
         rmap_x_list{ep_index}=rmap_x;
         rmap_y_list{ep_index}=rmap_y;
         % chern_cond_list(ep_index)=chern_cond;
+        pol_list(ep_index)=pol;
     end
 
     save(sprintf('phase_nu%d,%d_Vz%.1f_w%.1f_Vb%.1f_d%.1f_Nk%d.mat',nu(1),nu(2),Vz_t,w,Vb,d,Nk),'chern_p_list','chern_m_list','gap_final_list','tot_final_list','epoch_list','ep_list','s0_list','sx_list','sy_list','sz_list','rmap_x_list','rmap_y_list');
@@ -47,7 +49,7 @@ end
 
 
 
-function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y,chern_cond]=iter(epsilon,ave1,ave2,epoch,params)
+function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,rmap_y,chern_cond,pol]=iter(epsilon,ave1,ave2,epoch,params)
     params.epsilon=epsilon;
     [energyall,wfall,valley_index,V1_ave_delta,V2_ave_delta]=energyMF(ave1,ave2,epoch,params);
     [ave1_n,ave2_n,occ]=average(energyall,wfall,epoch,params); 
@@ -81,7 +83,7 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
         epoch=epoch+1;
     end
     fn=sprintf('nu_%d,%d_Nmax%d_w%.1f_Vb%.1f_Nk_%d_Vzt_%.1f_d%.1f_ep%.1f',params.nu(1),params.nu(2),params.Nmax,1000*params.w,1000*params.V_b,params.n,params.Vz_t*1000,params.d/(1e-9*5.076e6),params.epsilon);
-    re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fgs',params.chern),params);
+    re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2_n,epoch,strcat('fgsp',params.chern),params);
     gap=re.gap;
     tot=re.tot;
     fig_band=re.fig_band;
@@ -95,6 +97,7 @@ function [ave1,ave2,gap_list,tot_list,epoch,chern_p,chern_m,s0,sx,sy,sz,rmap_x,r
     rmap_x=re.rmap_x;
     rmap_y=re.rmap_y;
     chern_cond=re.chern_cond;
+    pol=re.pol;
     gap_list(end+1)=gap;
     tot_list(end+1)=tot;
     savefig(fig_band,strcat(fn,'_band.fig'));

@@ -29,6 +29,15 @@ function re=plotline_2(energyall,ave1,ave2,V1_ave_delta,V2_ave_delta,ave1_n,ave2
     mu_c=energyall_sort(1+Nk*Nai*params.nu(1)/(params.nu(2)));
     re.gap=mu_c-mu_v;
 
+    % polarization of positive
+    if ismember('p',output)
+        if prod(size(energyall_m))>1
+            re.pol=(nnz(energyall_p(:)<mu_v)-nnz(energyall_m(:)<mu_v))/(nnz(energyall_p(:)<mu_v)+nnz(energyall_m(:)<mu_v));
+        else
+            re.pol=nan;
+        end
+    end
+
     if prod(size(V1_ave_delta))>1 && prod(size(V2_ave_delta))>1
         re.tot=totalenergy(V1_ave_delta,V2_ave_delta,ave1,ave2,epoch,params);
     else
