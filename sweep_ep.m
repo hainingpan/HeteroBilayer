@@ -1,5 +1,5 @@
 function sweep_ep(nu,Nmax,w,Nk,Vz_t,Vb,d)
-    ep_list=linspace(25,15,101);
+    ep_list=linspace(150,15,101);
     % ep_list=1./linspace(0,1/50,20);
     chern_p_list=ep_list;
     chern_m_list=ep_list;

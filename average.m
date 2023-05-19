@@ -16,13 +16,27 @@ function [ave1,ave2,occ]=average(energyall,wfall,epoch,params)
             occ=energyall*0;
             occ(:,1:2*Nai)=1;
             occ(:,2*Nai+1:end)=0;
-        end
+        end        
+        % check which valley it belongs to
         v_p=sum(abs(wfall(:,:,1:end/2)).^2,3);
         v_m=sum(abs(wfall(:,:,end/2+1:end)).^2,3);
         if params.valley_polarized==1
             occ=(v_p>v_m).*occ;
         elseif params.valley_polarized==-1        
             occ=~((v_p>v_m)).*occ;
+        end
+        
+        if isfield(params,'spin_polarized')
+            occ_1=energyall*0;
+            occ_2=energyall*0;
+            % occupy first band
+            occ_1(:,1:2*Nai)=1;
+            
+            occ_1=(v_p>v_m).*occ_1;
+            % occupy second band
+            occ_2(:,2*Nai+1:4*Nai)=1;
+            occ_2=(v_p<v_m).*occ_2;
+            occ=occ_1+occ_2;
         end
     else
         mu=energyall_sort(Nk*Nai*params.nu(1)/(params.nu(2)));

@@ -1,13 +1,14 @@
 function params=mainTMD(varargin)
     p=inputParser;
-    addParameter(p,'a_b',3.575e-10*5.076e6);
-    addParameter(p,'a_t',3.32e-10*5.076e6);
-    addParameter(p,'theta',0);
-    addParameter(p,'m_b',0.65);
-    addParameter(p,'m_t',0.35);
-    addParameter(p,'V_b',4.1);
-    addParameter(p,'V_t',0);
-    addParameter(p,'psi_b',14);
+%     addParameter(p,'a_b',3.575e-10*5.076e6);
+    addParameter(p,'a_b',3.18e-10*5.076e6);
+    addParameter(p,'a_t',3.18e-10*5.076e6);
+    addParameter(p,'theta',2.876);
+    addParameter(p,'m_b',1.07);
+    addParameter(p,'m_t',1.07);
+    addParameter(p,'V_b',6);
+    addParameter(p,'V_t',6);
+    addParameter(p,'psi_b',0);
     addParameter(p,'psi_t',0);
     addParameter(p,'w',1.3);
     addParameter(p,'Vz_b',0);
@@ -93,6 +94,19 @@ function params=mainTMD(varargin)
         % params.dense_factor=2;
         % params.sigma_xy=1;
     end
+    
+    % QAHE with spin polarized
+    if params.nu==[5,5]
+    ailist=[0,0];
+    am_index=eye(2);
+    params.spin_polarized=0;
+    params.fermisurface=0;
+    params.shift=1;
+    params.SDW=0;
+    % params.dense_factor=2;
+    % params.sigma_xy=1;
+    end
+    
     % QAHE(FM_z) WC, cascaded
     if params.nu==[2,2]
         ailist=[[0,0];[1,0];[2,0]];
@@ -357,7 +371,8 @@ function params=mainTMD(varargin)
                 xlist_rem=mod(xlist*new_pts(2,2),new_pts(2,1));
                 in_line1_x=xlist_rem(xlist_rem==0);
                 in_line1_y=in_line1_x*new_pts(2,2)/new_pts(2,1);
-                q_index_line1=[in_line1_x(:),in_line1_y(:)];
+                q_index_line1=[in_line1_x(:),in_line1_y(:)];iedit iter
+                
             else
                 q_index_line1=[];
             end
